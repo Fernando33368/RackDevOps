@@ -10,7 +10,7 @@ type StatDisplayProps = {
 
 const colors = {
     cyan:   '#00d9ff',
-    purple: '#a855f7',
+    purple: '#af84ff',
     green:  '#22c55e',
     orange: '#f59e0b',
     red:    '#ef4444',
@@ -28,7 +28,7 @@ export default function StatDisplay({
 
     return (
         <div style={{
-            background: '#111827',
+            background: '#1b1b1b',
             border: `1px solid ${c}30`,
             borderRadius: 12,
             padding: '10px 16px',
@@ -42,12 +42,12 @@ export default function StatDisplay({
                 fontSize: 10,
                 textTransform: 'uppercase',
                 letterSpacing: '0.1em',
-                color: '#64748b',
+                color: '#c2bcbc',
                 display: 'flex',
                 alignItems: 'center',
                 gap: 4,
             }}>
-                {Icon && <Icon size={11} />}
+                {Icon && <Icon size={10} />}
                 {label}
             </div>
 
