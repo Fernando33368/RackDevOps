@@ -22,7 +22,7 @@ function StatusDot({ status }: { status?: RackItem['status'] }) {
     if (!status) return null;
     return (
         <div style={{
-            width: 7, height: 7,
+            width: 8, height: 7,
             borderRadius: '50%',
             background: c,
             boxShadow: `0 0 6px ${c}`,
@@ -83,10 +83,10 @@ function RackUnit({ item }: { item: RackItem }) {
                     <div style={{
                         height: '100%',
                         width: `${item.load}%`,
-                        background: item.load > 80 ? '#ef4444' : '#22c55e',
+                        background: item.load > 80 ? '#bb1414' : '#22c55e',
                         borderRadius: 2,
                         transition: 'width 0.5s',
-                    }} />
+                    }} />   
                 </div>
             )}
 

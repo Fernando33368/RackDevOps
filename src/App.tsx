@@ -6,14 +6,15 @@ import InputField from '@/components/InputField';
 import StatDisplay from '@/components/StatDisplay';
 import RackVisualization from '@/components/RackVisualization';
 import type { RackItem } from '@/components/RackVisualization';
-import NetworkTopology from '@/components/NetworkTopology.tsx';
+import NetworkTopology from '@/components/NetworkTopology';
+import NetworkScene3D from '@/components/NetworkScene3D';
 
 export default function App() {
 
-    const [pcs, setPcs]         = useState(10);
-    const [servers, setServers] = useState(2);
-    const [cameras, setCameras] = useState(4);
-    const [phones, setPhones]   = useState(5);
+    const [pcs, setPcs]           = useState(10);
+    const [servers, setServers]   = useState(2);
+    const [cameras, setCameras]   = useState(4);
+    const [phones, setPhones]     = useState(5);
     const [printers, setPrinters] = useState(2);
 
     // cálculos derivados
@@ -24,8 +25,8 @@ export default function App() {
 
     // items del rack
     const rackItems: RackItem[] = [
-        { type: 'router',       units: 1, label: 'Router Core',   model: 'Cisco ISR 4331', status: 'online' },
-        { type: 'firewall',     units: 1, label: 'Firewall',       model: 'FortiGate 60F',  status: 'online' },
+        { type: 'router',      units: 1, label: 'Router Core',   model: 'Cisco ISR 4331', status: 'online' },
+        { type: 'firewall',    units: 1, label: 'Firewall',       model: 'FortiGate 60F',  status: 'online' },
         ...Array.from({ length: Math.min(servers, 4) }, (_, i) => ({
             type: 'server' as const,
             units: 2,
@@ -34,16 +35,16 @@ export default function App() {
             status: 'online' as const,
             load: 45 + i * 10,
         })),
-        { type: 'poe-switch',   units: 1, label: 'Switch PoE',    status: 'online' },
-        { type: 'switch',       units: 1, label: 'Switch GbE',     status: 'online' },
-        { type: 'patch-panel',  units: 1, label: 'Patch Panel 48p' },
-        { type: 'ups',          units: 2, label: 'UPS 3000VA',     status: 'online' },
+        { type: 'poe-switch',  units: 1, label: 'Switch PoE',    status: 'online' },
+        { type: 'switch',      units: 1, label: 'Switch GbE',     status: 'online' },
+        { type: 'patch-panel', units: 1, label: 'Patch Panel 48p' },
+        { type: 'ups',         units: 2, label: 'UPS 3000VA',     status: 'online' },
     ];
 
     return (
         <div style={{ padding: 32, display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            {/* titulo */}
+            {/* título */}
             <h1 style={{
                 margin: 0,
                 fontSize: 22,
@@ -57,14 +58,14 @@ export default function App() {
 
             {/* stats */}
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <StatDisplay label="Hosts"    value={totalDevices}              icon={Monitor} color="cyan"   />
+                <StatDisplay label="Hosts"    value={totalDevices}                    icon={Monitor} color="cyan"   />
                 <StatDisplay label="Puertos"  value={`${totalDevices}/${totalPorts}`} icon={Monitor} color="green"  />
-                <StatDisplay label="PoE"      value={poeDevices}                icon={Monitor} color="orange" />
-                <StatDisplay label="Switches" value={switchCount}               icon={Monitor} color="purple" />
+                <StatDisplay label="PoE"      value={poeDevices}                      icon={Monitor} color="orange" />
+                <StatDisplay label="Switches" value={switchCount}                     icon={Monitor} color="purple" />
             </div>
 
             {/* fila principal */}
-            <div style={{ display: 'grid', gridTemplateColumns: '240px 1fr 260px', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr 1fr 240px', gap: 20 }}>
 
                 {/* inputs */}
                 <GlowCard>
@@ -72,11 +73,11 @@ export default function App() {
                         Dispositivos
                     </p>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                        <InputField label="PCs"         value={pcs}      onChange={setPcs}      icon={Monitor} />
-                        <InputField label="Servidores"  value={servers}  onChange={setServers}  icon={Server}  />
-                        <InputField label="Cámaras IP"  value={cameras}  onChange={setCameras}  icon={Camera}  />
-                        <InputField label="VoIP"        value={phones}   onChange={setPhones}   icon={Phone}   />
-                        <InputField label="Impresoras"  value={printers} onChange={setPrinters} icon={Printer} />
+                        <InputField label="PCs"        value={pcs}      onChange={setPcs}      icon={Monitor} />
+                        <InputField label="Servidores" value={servers}  onChange={setServers}  icon={Server}  />
+                        <InputField label="Cámaras IP" value={cameras}  onChange={setCameras}  icon={Camera}  />
+                        <InputField label="VoIP"       value={phones}   onChange={setPhones}   icon={Phone}   />
+                        <InputField label="Impresoras" value={printers} onChange={setPrinters} icon={Printer} />
                     </div>
                 </GlowCard>
 
@@ -93,6 +94,20 @@ export default function App() {
                         printers={printers}
                         switches={switchCount}
                     />
+                </GlowCard>
+
+                {/* escena 3D */}
+                <GlowCard>
+                    <p style={{ margin: '0 0 8px', fontSize: 11, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        Vista 3D · arrastra para rotar
+                    </p>
+                    <div style={{ height: 280 }}>
+                        <NetworkScene3D config={{
+                            pcs, servers, cameras, phones, printers,
+                            switchCount,
+                            rackUnits: 22,
+                        }} />
+                    </div>
                 </GlowCard>
 
                 {/* rack */}

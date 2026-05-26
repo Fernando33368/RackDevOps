@@ -17,12 +17,9 @@ const colors = {
 };
 
 export default function StatDisplay({
-    label,
-    value,
-    unit,
-    icon: Icon,
-    color = 'cyan',
+    label, value, unit, icon: Icon, color = 'cyan'
 }: StatDisplayProps) {
+
 
     const c = colors[color];
 
@@ -51,15 +48,16 @@ export default function StatDisplay({
                 {label}
             </div>
 
-            <div style={{
-                fontSize: 20,
-                fontWeight: 'bold',
-                fontFamily: 'Consolas, monospace',
-                color: c,
-            }}>
+<div style ={{
+    fontSize:20,
+    fontWeight: 'bold',
+    fontFamily: 'Consolas, monospace',
+    color: c,
+}}>
+
                 {value}
                 {unit && (
-                    <span style={{ fontSize: 11, color: '#64748b', marginLeft: 4 }}>
+                    <span style={{ fontSize: 11, color: '#5877a3', marginLeft: 4 }}>
                         {unit}
                     </span>
                 )}

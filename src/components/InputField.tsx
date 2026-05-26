@@ -30,7 +30,7 @@ export default function InputField({
                 alignItems: 'center',
                 gap: 6,
             }}>
-                {Icon && <Icon size={13} />}
+                {Icon && <Icon size={14} />}
                 {label}
             </label>
 

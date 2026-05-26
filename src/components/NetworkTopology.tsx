@@ -73,7 +73,7 @@ export default function NetworkTopology({
                 x: cx + Math.cos(rad) * radius,
                 y: cy + Math.sin(rad) * radius,
                 color: '#334155',
-            });
+            }); 
             edges.push({ from: 'core', to: id });
         }
     }
@@ -84,7 +84,7 @@ export default function NetworkTopology({
     if (phones > 0)   addArc(phones,   'phone',   'VoIP',      '#a855f7',  90, 160, 120);
     if (printers > 0) addArc(printers, 'printer', 'Impresora', '#ef4444', 165, 195, 110);
 
-    // posición de texto de cada nodo
+    // Posicision de texto de cada nodo
     function getTextAnchor(x: number) {
         if (x < cx - 20) return 'end';
         if (x > cx + 20) return 'start';
@@ -129,12 +129,14 @@ export default function NetworkTopology({
                         fillOpacity={0.1}
                     />
                     {/* círculo principal */}
+                    
                     <circle
                         cx={node.x} cy={node.y}
-                        r={node.id === 'core' ? 16 : 7}
+                        r={node.id === 'core' ? 12 : 6}
                         fill={node.color}
-                        fillOpacity={0.85}
-                    />
+                        />
+
+
                     {/* label */}
                     <text
                         x={node.x}
@@ -148,6 +150,8 @@ export default function NetworkTopology({
                     </text>
                 </g>
             ))}
+            
         </svg>
+
     );
 }
