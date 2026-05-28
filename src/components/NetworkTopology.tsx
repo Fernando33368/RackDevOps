@@ -126,7 +126,7 @@ export default function NetworkTopology({
                         cx={node.x} cy={node.y}
                         r={node.id === 'core' ? 22 : 10}
                         fill={node.color}
-                        fillOpacity={0.1}
+                        fillOpacity={0.1}   
                     />
                     {/* círculo principal */}
                     

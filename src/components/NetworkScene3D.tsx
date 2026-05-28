@@ -101,13 +101,13 @@ export default function NetworkScene3D({ config }: { config: SceneConfig }) {
             const total = Math.min(count, 8);
             const group: THREE.Mesh[] = [];
 
-            for (let i = 0; i < total; i++) {
-                const angle = total === 1
-                    ? (angleStart + angleEnd) / 2
-                    : angleStart + (i / (total - 1)) * (angleEnd - angleStart);
-                const rad = (angle * Math.PI) / 180;
+            for (let i=0; i<total; i++){
+                const angle=total===1
+                    ? (angleStart + angleEnd)/2
+                    : angleStart + (i/(total-1)) * (angleEnd - angleStart);
+                const rad=(angle*Math.PI)/180;
 
-                const mesh = box(0.4, 0.25, 0.3, color);
+                const mesh = box(0.4,0.25,0.3,color);
                 mesh.position.set(
                     Math.cos(rad) * radius,
                     y,
@@ -123,7 +123,7 @@ export default function NetworkScene3D({ config }: { config: SceneConfig }) {
                 ];
                 const line = new THREE.Line(
                     new THREE.BufferGeometry().setFromPoints(points),
-                    new THREE.LineBasicMaterial({ color, opacity: 0.3, transparent: true }),
+                    new THREE.LineBasicMaterial({ color,opacity:0.3,transparent:true }),
                 );
                 scene.add(line);
             }
@@ -151,7 +151,7 @@ export default function NetworkScene3D({ config }: { config: SceneConfig }) {
         const onMove = (e: MouseEvent) => {
             if (!isDragging) return;
             const dx = e.clientX - prevX;
-            rotY += dx * 0.01;
+            rotY+=dx*0.01;
             prevX = e.clientX;
         };
 
@@ -174,7 +174,7 @@ export default function NetworkScene3D({ config }: { config: SceneConfig }) {
             // flotación suave de dispositivos
             [...pcsGroup, ...serversGroup, ...camerasGroup, ...phonesGroup, ...printersGroup]
                 .forEach((m, i) => {
-                    m.position.y = Math.sin(t * 0.8 + i * 0.5) * 0.1;
+                    m.position.y = Math.sin(t*0.8+i*0.5)*0.1;
                 });
 
             renderer.render(scene, camera);
@@ -191,6 +191,7 @@ export default function NetworkScene3D({ config }: { config: SceneConfig }) {
             camera.updateProjectionMatrix();
             renderer.setSize(w, h);
         };
+        
         window.addEventListener('resize', onResize);
 
         // cleanup

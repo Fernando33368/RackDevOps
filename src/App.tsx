@@ -8,6 +8,7 @@ import RackVisualization from '@/components/RackVisualization';
 import type { RackItem } from '@/components/RackVisualization';
 import NetworkTopology from '@/components/NetworkTopology';
 import NetworkScene3D from '@/components/NetworkScene3D';
+import CostEstimator from '@/components/CostEstimator';
 
 export default function App() {
 
@@ -117,7 +118,17 @@ export default function App() {
                     </p>
                     <RackVisualization items={rackItems} totalUnits={22} />
                 </GlowCard>
-
+                
+                {/* estimador de costos */}
+                <GlowCard style={{ maxWidth: 480 }}>
+                    <CostEstimator
+                    servers={servers}
+                    switches24={switchCount}
+                    switches48={0}
+                    poeSwitches={Math.ceil((cameras + phones) / 24)}
+                    rackSize="22U"
+                />
+                </GlowCard>
             </div>
 
         </div>
