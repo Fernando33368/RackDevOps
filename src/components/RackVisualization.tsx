@@ -13,7 +13,7 @@ const colors: Record<RackItem['type'], string> = {
     server:       '#22c55e',
     switch:       '#00d9ff',
     'poe-switch': '#f59e0b',
-    'patch-panel':'#64748b',
+    'patch-panel': '#64748b',
     ups:          '#a855f7',
 };
 

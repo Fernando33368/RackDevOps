@@ -311,17 +311,7 @@ export default function Index() {
                 {/* ═══ PANEL CENTRAL ═══ */}
                 <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: '#060d16' }}>
 
-                    {/* escena 3D */}
-                    <GlowCard style={{ height: 260, padding: 0, overflow: 'hidden', position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 10, left: 14, fontSize: 9, color: 'rgba(0,217,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10 }}>
-                            Vista 3D · Arrastra para rotar
-                        </div>
-                        <NetworkScene3D config={{
-                            pcs: cfg.pcs, servers: cfg.servers, cameras: cfg.cameras,
-                            phones: cfg.phones, printers: cfg.printers,
-                            switchCount, rackUnits: rackU,
-                        }} />
-                    </GlowCard>
+
 
                     {/* análisis de capacidad */}
                     <GlowCard>
@@ -355,7 +345,7 @@ export default function Index() {
                         {/* métricas */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                             {[
-                                { lbl: 'HOSTS ACTUALES',  val: totalHosts,              unit: '',  color: '#00d9ff' },
+                                { lbl: 'HOSTS ACTUALES',  val: totalHosts,              unit: '',  color: '#00d9ffç' },
                                 { lbl: 'PROYECTADOS',     val: projected,               unit: '',  color: '#a855f7' },
                                 { lbl: 'PUERTOS PoE',     val: `${poeDevices}/${poePorts}`, unit: '', color: '#f59e0b' },
                                 { lbl: 'CONSUMO PoE',     val: poeWatts,                unit: 'W', color: '#f59e0b' },
@@ -411,7 +401,7 @@ export default function Index() {
                 {/* ═══ PANEL DERECHO — RACK ═══ */}
                 <aside style={{
                     borderLeft: '1px solid #1e2d42', overflowY: 'auto',
-                    background: 'rgba(7,17,29,0.6)', padding: 16,
+                    background: 'rgba(7,17,29,0.6)', padding: 20,
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>

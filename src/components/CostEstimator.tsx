@@ -14,7 +14,7 @@ type LineItem = {
     label: string;
     qty: number;
     unitPrice: number;
-    color: string;
+    image: string;
 };
 
 export default function CostEstimator({
@@ -40,18 +40,18 @@ export default function CostEstimator({
     const cablesCount  = Math.max(1, Math.ceil(totalEquipos / 10));
 
     const items: LineItem[] = [
-        { label: 'Servidor Dell R750',     qty: servers,       unitPrice: 85000,                    color: '#22c55e' },
-        { label: 'Switch 24p GbE',         qty: switches24,    unitPrice: 3400,                     color: '#00d9ff' },
-        { label: 'Switch 48p GbE',         qty: switches48,    unitPrice: 6000,                     color: '#00d9ff' },
-        { label: 'Switch PoE 24p',         qty: poeSwitches24, unitPrice: 6500,                     color: '#f59e0b' },
-        { label: 'Switch PoE 48p',         qty: poeSwitches48, unitPrice: 13000,                    color: '#f59e0b' },
-        { label: 'Router Cisco ISR 4331',  qty: routers,       unitPrice: 22000,                    color: '#3b82f6' },
-        { label: 'Firewall FortiGate 60F', qty: firewalls,     unitPrice: 15000,                    color: '#ef4444' },
-        { label: 'Access Point WiFi',      qty: aps,           unitPrice: 3500,                     color: '#a855f7' },
-        { label: `Rack ${rackSize}`,       qty: 1,             unitPrice: rackPrice[rackSize] ?? 5200, color: '#a855f7' },
-        { label: 'UPS 3000VA',             qty: upsCount,      unitPrice: 11000,                    color: '#7c3aed' },
-        { label: 'Patch Panel Cat6 48p',   qty: patchCount,    unitPrice: 1100,                     color: '#64748b' },
-        { label: 'Cableado estructurado',  qty: cablesCount,   unitPrice: 7500,                     color: '#64748b' },
+        { label: 'Servidor Dell R750',     qty: servers,       unitPrice: 85000,                     image: '/image/servidor.png' },
+        { label: 'Switch 24p GbE',         qty: switches24,    unitPrice: 3400,                     image: '/image/switch_24p.png' },
+        { label: 'Switch 48p GbE',         qty: switches48,    unitPrice: 6000,                     image: '/image/switch_48p.png' },
+        { label: 'Switch PoE 24p',         qty: poeSwitches24, unitPrice: 6500,                     image: '/image/switch_24p.png' },
+        { label: 'Switch PoE 48p',         qty: poeSwitches48, unitPrice: 13000,                    image: '/image/switch_48p.png' },
+        { label: 'Router Cisco ISR 4331',  qty: routers,       unitPrice: 22000,                    image: '/image/SwitchCore.png' },
+        { label: 'Firewall FortiGate 60F', qty: firewalls,     unitPrice: 15000,                    image: '/image/Firewall.png' },
+        { label: 'Access Point WiFi',      qty: aps,           unitPrice: 3500,                     image: '/image/access_point.png' },
+        { label: `Rack ${rackSize}`,       qty: 1,             unitPrice: rackPrice[rackSize] ?? 5200, image: '/image/rack.png' },
+        { label: 'UPS 3000VA',             qty: upsCount,      unitPrice: 11000,                    image: '/image/UPS.png' },
+        { label: 'Patch Panel Cat6 48p',   qty: patchCount,    unitPrice: 1100,                     image: '/image/PATCH_PANEL.png' },
+        { label: 'Cableado estructurado',  qty: cablesCount,   unitPrice: 7500,                     image: '/image/bobina_de_cable.png' },
     ].filter(item => item.qty > 0);
 
     const total = items.reduce((acc, item) => acc + item.qty * item.unitPrice, 0);
@@ -85,18 +85,22 @@ export default function CostEstimator({
                         borderBottom: '1px solid #1e293b',
                     }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <div style={{
-                                width: 6, height: 6,
-                                borderRadius: '50%',
-                                background: item.color,
-                                flexShrink: 0,
-                            }} />
+                            <img 
+                                src={item.image} 
+                                alt={item.label} 
+                                style={{
+                                    width: 40, 
+                                    height: 40,
+                                    borderRadius: '50%',
+                                    background: item.image,
+                                    flexShrink: 0,
+                                }} />
                             <span style={{ color: '#94a3b8' }}>{item.label}</span>
                         </div>
                         <span style={{ color: '#475569', textAlign: 'center' }}>
                             x{item.qty}
                         </span>
-                        <span style={{ color: item.color, fontFamily: 'Consolas, monospace', textAlign: 'right' }}>
+                        <span style={{ color: item.image, fontFamily: 'Consolas, monospace', textAlign: 'right' }}>
                             {fmt(item.qty * item.unitPrice)}
                         </span>
                     </div>
