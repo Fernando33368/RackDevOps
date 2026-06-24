@@ -7,151 +7,355 @@ type TopologyProps = {
     switches: number;
 };
 
-type Node = {
-    id: string;
+type Device = {
     label: string;
-    x: number;
-    y: number;
+    icon: string;
     color: string;
 };
 
-type Edge = {
-    from: string;
-    to: string;
-};
-
 export default function NetworkTopology({
-    pcs, servers, cameras, phones, printers, switches
+    pcs,
+    servers,
+    cameras,
+    phones,
+    printers,
 }: TopologyProps) {
 
-    const W = 500;
-    const H = 320;
-    const cx = W / 2;
-    const cy = H / 2;
+    const devices: Device[] = [];
 
-    // nodo central: switch core
-    const nodes: Node[] = [
-        { id: 'core', label: 'Switch Core', x: cx, y: cy, color: '#00d9ff' },
-    ];
-    const edges: Edge[] = [];
-
-    // helper para poner nodos en arco
-    function addArc(
-        count: number,
-        prefix: string,
-        label: string,
-        color: string,
-        angleStart: number,
-        angleEnd: number,
-        radius: number,
-    ) {
-        const total = Math.min(count, 6); // máximo 6 visibles
-        for (let i = 0; i < total; i++) {
-            const angle = total === 1
-                ? (angleStart + angleEnd) / 2
-                : angleStart + (i / (total - 1)) * (angleEnd - angleStart);
-            const rad = (angle * Math.PI) / 180;
-            const id = `${prefix}${i}`;
-            nodes.push({
-                id,
-                label: total > 1 ? `${label} ${i + 1}` : label,
-                x: cx + Math.cos(rad) * radius,
-                y: cy + Math.sin(rad) * radius,
-                color,
-            });
-            edges.push({ from: 'core', to: id });
-        }
-
-        // si hay más de 6, agrega nodo "...+N"
-        if (count > 6) {
-            const angle = angleEnd + 10;
-            const rad = (angle * Math.PI) / 180;
-            const id = `${prefix}_more`;
-            nodes.push({
-                id,
-                label: `+${count - 6} más`,
-                x: cx + Math.cos(rad) * radius,
-                y: cy + Math.sin(rad) * radius,
-                color: '#334155',
-            }); 
-            edges.push({ from: 'core', to: id });
-        }
+    for (let i = 1; i <= pcs; i++) {
+        devices.push({
+            label: `PC ${i}`,
+            icon: "🖥️",
+            color: "#94a3b8"
+        });
     }
 
-    if (pcs > 0)      addArc(pcs,      'pc',      'PC',        '#94a3b8', 200, 340, 120);
-    if (servers > 0)  addArc(servers,  'srv',     'Servidor',  '#22c55e', 340, 380,  110);
-    if (cameras > 0)  addArc(cameras,  'cam',     'Cámara',    '#f59e0b',  10,  80, 120);
-    if (phones > 0)   addArc(phones,   'phone',   'VoIP',      '#a855f7',  90, 160, 120);
-    if (printers > 0) addArc(printers, 'printer', 'Impresora', '#ef4444', 165, 195, 110);
-
-    // Posicision de texto de cada nodo
-    function getTextAnchor(x: number) {
-        if (x < cx - 20) return 'end';
-        if (x > cx + 20) return 'start';
-        return 'middle';
+    for (let i = 1; i <= servers; i++) {
+        devices.push({
+            label: `Servidor ${i}`,
+            icon: "🗄️",
+            color: "#22c55e"
+        });
     }
 
-    function getLabelOffset(node: Node) {
-        const dy = node.y < cy ? -14 : 14;
-        return dy;
+    for (let i = 1; i <= cameras; i++) {
+        devices.push({
+            label: `Cam ${i}`,
+            icon: "📹",
+            color: "#f59e0b"
+        });
     }
+
+    for (let i = 1; i <= phones; i++) {
+        devices.push({
+            label: `VoIP ${i}`,
+            icon: "☎️",
+            color: "#a855f7"
+        });
+    }
+
+    for (let i = 1; i <= printers; i++) {
+        devices.push({
+            label: `Imp ${i}`,
+            icon: "🖨️",
+            color: "#ef4444"
+        });
+    }
+
+    const devicesPerSwitch = 24;
+
+    const switchCount =
+        Math.max(
+            1,
+            Math.ceil(
+                devices.length / devicesPerSwitch
+            )
+        );
+
+    const switches = Array.from(
+        { length: switchCount },
+        (_, i) => ({
+            id: i + 1
+        })
+    );
+
+    const W =
+        Math.max(
+            900,
+            switchCount * 220
+        );
+
+    const H =
+        700 +
+        Math.ceil(
+            devices.length / switchCount
+        ) *
+        26;
+
+    const internetX = W / 2;
+    const firewallX = W / 2;
+    const coreX = W / 2;
 
     return (
-        <svg
-            viewBox={`0 0 ${W} ${H}`}
-            style={{ width: '100%', height: 'auto' }}
+
+        <div
+            style={{
+                overflowX: "auto",
+                overflowY: "auto",
+                maxHeight: 650
+            }}
         >
-            {/* líneas de conexión */}
-            {edges.map((e, i) => {
-                const from = nodes.find(n => n.id === e.from)!;
-                const to   = nodes.find(n => n.id === e.to)!;
-                return (
-                    <line
-                        key={i}
-                        x1={from.x} y1={from.y}
-                        x2={to.x}   y2={to.y}
-                        stroke={to.color}
-                        strokeWidth={1}
-                        strokeOpacity={0.3}
-                        strokeDasharray="4 3"
-                    />
-                );
-            })}
 
-            {/* nodos */}
-            {nodes.map(node => (
-                <g key={node.id}>
-                    {/* halo */}
-                    <circle
-                        cx={node.x} cy={node.y}
-                        r={node.id === 'core' ? 22 : 10}
-                        fill={node.color}
-                        fillOpacity={0.1}   
-                    />
-                    {/* círculo principal */}
-                    
-                    <circle
-                        cx={node.x} cy={node.y}
-                        r={node.id === 'core' ? 12 : 6}
-                        fill={node.color}
-                        />
+            <svg
+                width={W}
+                height={H}
+            >
 
+                {/* Internet */}
+                <text
+                    x={internetX}
+                    y={40}
+                    textAnchor="middle"
+                    fontSize="28"
+                >
+                    🌐
+                </text>
 
-                    {/* label */}
-                    <text
-                        x={node.x}
-                        y={node.y + getLabelOffset(node)}
-                        textAnchor={getTextAnchor(node.x)}
-                        fontSize={node.id === 'core' ? 9 : 8}
-                        fill={node.color}
-                        fontFamily="Consolas, monospace"
-                    >
-                        {node.label}
-                    </text>
-                </g>
-            ))}
-            
-        </svg>
+                <text
+                    x={internetX}
+                    y={65}
+                    textAnchor="middle"
+                    fill="#00d9ff"
+                    fontSize="11"
+                >
+                    Internet
+                </text>
+
+                {/* Firewall */}
+                <line
+                    x1={internetX}
+                    y1={80}
+                    x2={firewallX}
+                    y2={120}
+                    stroke="#475569"
+                />
+
+                <text
+                    x={firewallX}
+                    y={145}
+                    textAnchor="middle"
+                    fontSize="28"
+                >
+                    🔥
+                </text>
+
+                <text
+                    x={firewallX}
+                    y={170}
+                    textAnchor="middle"
+                    fill="#ef4444"
+                    fontSize="11"
+                >
+                    Firewall
+                </text>
+
+                {/* Core */}
+                <line
+                    x1={firewallX}
+                    y1={185}
+                    x2={coreX}
+                    y2={225}
+                    stroke="#475569"
+                />
+
+                <text
+                    x={coreX}
+                    y={250}
+                    textAnchor="middle"
+                    fontSize="28"
+                >
+                    🔀
+                </text>
+
+                <text
+                    x={coreX}
+                    y={275}
+                    textAnchor="middle"
+                    fill="#00d9ff"
+                    fontSize="11"
+                >
+                    Core Switch
+                </text>
+
+                {/* Switches */}
+                {switches.map((sw, index) => {
+
+                    const spacing =
+                        W /
+                        (switchCount + 1);
+
+                    const x =
+                        spacing *
+                        (index + 1);
+
+                    const y = 350;
+
+                    return (
+                        <g
+                            key={index}
+                        >
+
+                            <line
+                                x1={coreX}
+                                y1={290}
+                                x2={x}
+                                y2={y - 25}
+                                stroke="#334155"
+                            />
+
+                            <text
+                                x={x}
+                                y={y}
+                                textAnchor="middle"
+                                fontSize="24"
+                            >
+                                🔌
+                            </text>
+
+                            <text
+                                x={x}
+                                y={y + 20}
+                                textAnchor="middle"
+                                fill="#22c55e"
+                                fontSize="10"
+                            >
+                                SW{sw.id}
+                            </text>
+
+                        </g>
+                    );
+
+                })}
+
+                {/* Dispositivos */}
+                {switches.map(
+                    (
+                        sw,
+                        switchIndex
+                    ) => {
+
+                        const spacing =
+                            W /
+                            (switchCount + 1);
+
+                        const switchX =
+                            spacing *
+                            (switchIndex + 1);
+
+                        const start =
+                            switchIndex *
+                            devicesPerSwitch;
+
+                        const end =
+                            Math.min(
+                                start +
+                                    devicesPerSwitch,
+                                devices.length
+                            );
+
+                        const group =
+                            devices.slice(
+                                start,
+                                end
+                            );
+
+                        return group.map(
+                            (
+                                device,
+                                deviceIndex
+                            ) => {
+
+                                const x =
+                                    switchX;
+
+                                const y =
+                                    420 +
+                                    deviceIndex *
+                                        24;
+
+                                return (
+                                    <g
+                                        key={`${switchIndex}-${deviceIndex}`}
+                                    >
+
+                                        <line
+                                            x1={
+                                                switchX
+                                            }
+                                            y1={
+                                                365
+                                            }
+                                            x2={x}
+                                            y2={
+                                                y -
+                                                12
+                                            }
+                                            stroke={
+                                                device.color
+                                            }
+                                            strokeOpacity={
+                                                0.35
+                                            }
+                                        />
+
+                                        <text
+                                            x={
+                                                x -
+                                                8
+                                            }
+                                            y={
+                                                y +
+                                                4
+                                            }
+                                            textAnchor="end"
+                                            fontSize="12"
+                                        >
+                                            {
+                                                device.icon
+                                            }
+                                        </text>
+
+                                        <text
+                                            x={
+                                                x +
+                                                6
+                                            }
+                                            y={
+                                                y +
+                                                4
+                                            }
+                                            fontSize="9"
+                                            fill={
+                                                device.color
+                                            }
+                                            fontFamily="Consolas, monospace"
+                                        >
+                                            {
+                                                device.label
+                                            }
+                                        </text>
+
+                                    </g>
+                                );
+                            }
+                        );
+                    }
+                )}
+
+            </svg>
+
+        </div>
 
     );
 }

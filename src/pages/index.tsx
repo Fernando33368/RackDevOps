@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
     Monitor, Server, Camera, Phone, Printer,
     Network, Cpu, Zap, HardDrive, Activity,
@@ -15,9 +15,11 @@ import NetworkTopology from '@/components/NetworkTopology';
 import NetworkScene3D from '@/components/NetworkScene3D';
 import CostEstimator from '@/components/CostEstimator';
 import RecommendationCard from '@/components/RecommendationCard';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 // ── Spinner ──────────────────────────────────────────────────────
-function Spinner({ value, onChange, min = 0, max = 99 }: {
+function Spinner({ value, onChange, min = 0, max = 9999 }: {
     value: number; onChange: (v: number) => void; min?: number; max?: number;
 }) {
     return ( 
@@ -52,20 +54,92 @@ function Spinner({ value, onChange, min = 0, max = 99 }: {
 }
 
 // ── Index ─────────────────────────────────────────────────────────
-export default function Index() {
+export default function index() {
 
     const [tab, setTab] = useState<'dispositivos' | 'infraestructura'>('infraestructura');
 
     const [cfg, setCfg] = useState({
-        pcs: 20, servers: 2, cameras: 8, phones: 8, printers: 2,
-        sw24: 1, sw48: 1, poe24: 1, poe48: 1,
-        routers: 1, firewalls: 1, aps: 2,
-    });
+    pcs: 0,
+    servers: 0,
+    cameras: 0,
+    phones: 0,
+    printers: 0,
+    sw24: 0,
+    sw48: 0,
+    poe24: 0,
+    poe48: 0,
+    routers: 0,
+    firewalls: 0,
+    aps: 0,
+});
 
     const set = (k: keyof typeof cfg) => (v: number) =>
         setCfg(c => ({ ...c, [k]: v }));
 
     const [rackSize, setRackSize] = useState<'12U' | '22U' | '36U' | '42U'>('22U');
+    const projectId = localStorage.getItem("projectId");
+    const navigate = useNavigate();
+    const saveProject = async () => {
+
+    try {
+
+        await axios.put(
+            `http://localhost:3000/projects/${projectId}`,
+            {
+                cfg,
+                rackSize
+            }
+        );
+
+        alert("Proyecto guardado correctamente");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Error al guardar proyecto");
+
+    }
+};
+
+useEffect(() => {
+
+    const loadProject = async () => {
+
+        if (!projectId) return;
+
+        try {
+
+            const res = await axios.get(
+                `http://localhost:3000/projects/${projectId}`
+            );
+
+            if (!res.data) return;
+
+            const data =
+                typeof res.data.configuracion === "string"
+                    ? JSON.parse(res.data.configuracion)
+                    : res.data.configuracion;
+
+            if (data?.cfg) {
+                setCfg(data.cfg);
+            }
+
+            if (data?.rackSize) {
+                setRackSize(data.rackSize);
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+    };
+
+    loadProject();
+
+}, [projectId]);
+
     const rackU = parseInt(rackSize);
 
     // cálculos
@@ -90,11 +164,10 @@ export default function Index() {
             items.push({ type: 'router', units: 1, label: `Router Core ${i + 1}`, model: 'Cisco ISR 4331', status: 'online' });
         for (let i = 0; i < cfg.firewalls; i++)
             items.push({ type: 'firewall', units: 1, label: `Firewall ${i + 1}`, model: 'FortiGate 60F', status: 'online' });
-        for (let i = 0; i < Math.min(cfg.servers, 6); i++)
+        for (let i = 0; i < cfg.servers; i++)
             items.push({ type: 'server', units: 2, label: `Servidor ${i + 1}`, model: 'Dell PowerEdge R750', status: 'online', load: 45 + i * 10 });
-        for (let i = 0; i < Math.min(cfg.poe24 + cfg.poe48, 3); i++)
-            items.push({ type: 'poe-switch', units: 1, label: `Switch PoE ${i + 1}`, status: 'online' });
-        for (let i = 0; i < Math.min(cfg.sw24 + cfg.sw48, 3); i++)
+        for (let i = 0; i < (cfg.poe24 + cfg.poe48);i++)
+        for (let i = 0; i < (cfg.sw24 + cfg.sw48);i++)
             items.push({ type: 'switch', units: 1, label: `Switch GbE ${i + 1}`, status: 'online' });
         items.push({ type: 'patch-panel', units: 1, label: 'Patch Panel Cat6 48p' });
         items.push({ type: 'ups', units: 2, label: 'UPS 3000VA Online' });
@@ -176,6 +249,37 @@ export default function Index() {
                 
                 {/* reloj + estado */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+<button
+    onClick={() => navigate("/")}
+    style={{
+        width: '100px',
+            height: '45px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            background: '#3b82f6',
+            color: 'white'
+    }}
+>
+    Inicio
+</button>
+
+<button
+    onClick={saveProject}
+    style={{
+        width: '100px',
+            height: '45px',
+            borderRadius: '8px',
+            border: 'none',
+            cursor: 'pointer',
+            fontWeight: 'bold',
+            background: '#22c55e',
+            color: 'white'
+    }}
+>
+    Guardar Proyecto
+</button>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
                         <Clock size={14} />{time}
                     </div>
