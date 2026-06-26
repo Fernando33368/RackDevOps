@@ -59,7 +59,7 @@ function RackUnit({ item }: { item: RackItem }) {
                     fontSize: 11,
                     fontWeight: 'bold',
                     color: c,
-                    fontFamily: 'Consolas, monospace',
+                    fontFamily: 'Consolas, monospace',  
                 }}>
                     {item.label}
                 </span>
@@ -120,7 +120,7 @@ export default function RackVisualization({ items, totalUnits }: RackVisualizati
             </div>
 
             {/* slots del rack */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 30}}>
 
                 {items.map((item, i) => (
                     <RackUnit key={i} item={item} />

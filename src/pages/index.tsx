@@ -57,7 +57,7 @@ export default function Index() {
     const [tab, setTab] = useState<'dispositivos' | 'infraestructura'>('infraestructura');
 
     const [cfg, setCfg] = useState({
-        pcs: 20, servers: 2, cameras: 8, phones: 8, printers: 2,
+        pcs: 0, servers: 0, cameras: 0, phones: 0, printers: 0,
         sw24: 1, sw48: 1, poe24: 1, poe48: 1,
         routers: 1, firewalls: 1, aps: 2,
     });
@@ -147,16 +147,10 @@ export default function Index() {
             }}>
                 {/* logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{
-                        width: 32, height: 32, borderRadius: 8,
-                        background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.3)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                        <Network size={16} color="#00d9ff" />
-                    </div>
+                    <img src="/image/Logo.jpeg" alt="RackDevOps" style={{ width: 50, height: 50 }} />
                     <div>
-                        <div style={{ fontSize: 14, fontWeight: 'bold', letterSpacing: '0.03em' }}>NetArch Simulator Pro</div>
-                        <div style={{ fontSize: 9, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                        <div style={{ fontSize: 14, fontWeight: 'bold', letterSpacing: '0.03em' }}>RackDevOps</div>
+                        <div style={{ fontSize: 9, color: 'cyan', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                             Diseño de Infraestructura de Red
                         </div>
                     </div>
@@ -308,8 +302,8 @@ export default function Index() {
                     )}
                 </aside>
 
-                {/* ═══ PANEL CENTRAL ═══ */}
-                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: '#060d16' }}>
+                {/* ═══ PANEL CENTRAL ═══ */} 
+                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: 'url(/image/Gift.gif)' }}>
 
 
 
@@ -345,7 +339,7 @@ export default function Index() {
                         {/* métricas */}
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                             {[
-                                { lbl: 'HOSTS ACTUALES',  val: totalHosts,              unit: '',  color: '#00d9ffç' },
+                                { lbl: 'HOSTS ACTUALES',  val: totalHosts,              unit: '',  color: '#00d9ff' },
                                 { lbl: 'PROYECTADOS',     val: projected,               unit: '',  color: '#a855f7' },
                                 { lbl: 'PUERTOS PoE',     val: `${poeDevices}/${poePorts}`, unit: '', color: '#f59e0b' },
                                 { lbl: 'CONSUMO PoE',     val: poeWatts,                unit: 'W', color: '#f59e0b' },
@@ -401,7 +395,7 @@ export default function Index() {
                 {/* ═══ PANEL DERECHO — RACK ═══ */}
                 <aside style={{
                     borderLeft: '1px solid #1e2d42', overflowY: 'auto',
-                    background: 'rgba(7,17,29,0.6)', padding: 20,
+                    background: 'url(/image/rack1.png)', padding: 20
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
