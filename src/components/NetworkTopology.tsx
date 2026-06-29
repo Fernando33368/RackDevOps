@@ -81,7 +81,7 @@ export default function NetworkTopology({
         radius: number,
     ) {
 
-        const total = Math.min(count, 3000);
+        const total = Math.min(count, 30000);
 
         for (let i = 0; i < total; i++) {
 

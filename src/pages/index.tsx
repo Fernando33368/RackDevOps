@@ -58,8 +58,8 @@ export default function Index() {
 
     const [cfg, setCfg] = useState({
         pcs: 0, servers: 0, cameras: 0, phones: 0, printers: 0,
-        sw24: 1, sw48: 1, poe24: 1, poe48: 1,
-        routers: 1, firewalls: 1, aps: 2,
+        sw24: 0, sw48: 0, poe24: 0, poe48: 0,
+        routers: 0, firewalls: 0, aps: 0,
     });
 
     const set = (k: keyof typeof cfg) => (v: number) =>
@@ -147,7 +147,7 @@ export default function Index() {
             }}>
                 {/* logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <img src="/image/Logo.jpeg" alt="RackDevOps" style={{ width: 50, height: 50 }} />
+                    <img src="/image/Logo.png" alt="RackDevOps" style={{ width: 60, height: 60 }} />
                     <div>
                         <div style={{ fontSize: 14, fontWeight: 'bold', letterSpacing: '0.03em' }}>RackDevOps</div>
                         <div style={{ fontSize: 9, color: 'cyan', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
@@ -170,7 +170,7 @@ export default function Index() {
                 
                 {/* reloj + estado */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'cyan' }}>
                         <Clock size={14} />{time}
                     </div>
                     <div style={{
@@ -395,14 +395,14 @@ export default function Index() {
                 {/* ═══ PANEL DERECHO — RACK ═══ */}
                 <aside style={{
                     borderLeft: '1px solid #1e2d42', overflowY: 'auto',
-                    background: 'url(/image/rack1.png)', padding: 20
+                    background: 'url(/image/rack1.png)', padding: 20 
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <Box size={16} color="#22c55e" />
-                            <span style={{ fontSize: 13, fontWeight: 'bold' }}>Rack {rackSize}</span>
+                            <Box size={16} color="cyan" />
+                            <span style={{ fontSize: 13, fontWeight: 'bold', color:'#B0C4DE'}}>Rack {rackSize}</span>
                         </div>
-                        <span style={{ fontSize: 10, color: '#475569', fontFamily: 'Consolas, monospace' }}>
+                        <span style={{ fontSize: 12, color: 'cyan', fontFamily: 'Consolas, monospace', fontWeight: 'bold' }}>
                             {usedRackU}U / {rackU}
                         </span>
                     </div>
