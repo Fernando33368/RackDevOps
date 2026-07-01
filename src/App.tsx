@@ -1,15 +1,11 @@
-import {
-    Routes,
-    Route
-} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import Home from "./pages/Home";
-import ProjectEditor from "./pages/index";
+import Index from "./pages/index";
 
 export default function App() {
     return (
         <Routes>
-
             <Route
                 path="/"
                 element={<Home />}
@@ -17,9 +13,8 @@ export default function App() {
 
             <Route
                 path="/project"
-                element={<ProjectEditor />}
+                element={<Index />}
             />
-
         </Routes>
     );
 }

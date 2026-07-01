@@ -7,10 +7,17 @@ type TopologyProps = {
     switches: number;
 };
 
-type Device = {
+type Node = {
+    id: string;
     label: string;
-    icon: string;
+    x: number;
+    y: number;
     color: string;
+};
+
+type Edge = {
+    from: string;
+    to: string;
 };
 
 export default function NetworkTopology({
@@ -19,343 +26,175 @@ export default function NetworkTopology({
     cameras,
     phones,
     printers,
+    switches,
 }: TopologyProps) {
 
-    const devices: Device[] = [];
+    const W = 500;
+    const H = 320;
 
-    for (let i = 1; i <= pcs; i++) {
-        devices.push({
-            label: `PC ${i}`,
-            icon: "🖥️",
-            color: "#94a3b8"
-        });
+    const cx = W / 2;
+    const cy = H / 2;
+
+    const nodes: Node[] = [
+        {
+            id: "core",
+            label:
+                switches > 1
+                    ? `Switch Core (${switches})`
+                    : "Switch Core",
+            x: cx,
+            y: cy,
+            color: "#00d9ff",
+        },
+    ];
+
+    const edges: Edge[] = [];
+
+    function getImg(id: string) {
+
+        if (id === "core")
+            return "/image/SwitchCore.png";
+
+        if (id.startsWith("pc"))
+            return "/image/PCS.png";
+
+        if (id.startsWith("srv"))
+            return "/image/servidor.png";
+
+        if (id.startsWith("cam"))
+            return "/image/camara_ip.png";
+
+        if (id.startsWith("phone"))
+            return "/image/telefono_voip.png";
+
+        if (id.startsWith("printer"))
+            return "/image/impresora.png";
+
+        return "/image/PCS.png";
     }
 
-    for (let i = 1; i <= servers; i++) {
-        devices.push({
-            label: `Servidor ${i}`,
-            icon: "🗄️",
-            color: "#22c55e"
-        });
+    function addArc(
+        count: number,
+        prefix: string,
+        label: string,
+        color: string,
+        angleStart: number,
+        angleEnd: number,
+        radius: number
+    ) {
+
+        const total = Math.min(count, 300);
+
+        for (let i = 0; i < total; i++) {
+
+            const angle =
+                total === 1
+                    ? (angleStart + angleEnd) / 2
+                    : angleStart +
+                      (i / (total - 1)) *
+                      (angleEnd - angleStart);
+
+            const rad = angle * Math.PI / 180;
+
+            const id = `${prefix}${i}`;
+
+            nodes.push({
+                id,
+                label: total > 1 ? `${label} ${i + 1}` : label,
+                x: cx + Math.cos(rad) * radius,
+                y: cy + Math.sin(rad) * radius,
+                color,
+            });
+
+            edges.push({
+                from: "core",
+                to: id,
+            });
+        }
     }
 
-    for (let i = 1; i <= cameras; i++) {
-        devices.push({
-            label: `Cam ${i}`,
-            icon: "📹",
-            color: "#f59e0b"
-        });
+    addArc(pcs, "pc", "PC", "#94a3b8", 200, 340, 120);
+    addArc(servers, "srv", "Servidor", "#22c55e", 340, 380, 110);
+    addArc(cameras, "cam", "Cámara", "#f59e0b", 10, 80, 120);
+    addArc(phones, "phone", "VoIP", "#a855f7", 90, 160, 120);
+    addArc(printers, "printer", "Impresora", "#ef4444", 165, 195, 110);
+
+    function getLabelY(node: Node) {
+        return node.id === "core"
+            ? node.y + 20
+            : node.y + 20;
     }
-
-    for (let i = 1; i <= phones; i++) {
-        devices.push({
-            label: `VoIP ${i}`,
-            icon: "☎️",
-            color: "#a855f7"
-        });
-    }
-
-    for (let i = 1; i <= printers; i++) {
-        devices.push({
-            label: `Imp ${i}`,
-            icon: "🖨️",
-            color: "#ef4444"
-        });
-    }
-
-    const devicesPerSwitch = 24;
-
-    const switchCount =
-        Math.max(
-            1,
-            Math.ceil(
-                devices.length / devicesPerSwitch
-            )
-        );
-
-    const switches = Array.from(
-        { length: switchCount },
-        (_, i) => ({
-            id: i + 1
-        })
-    );
-
-    const W =
-        Math.max(
-            900,
-            switchCount * 220
-        );
-
-    const H =
-        700 +
-        Math.ceil(
-            devices.length / switchCount
-        ) *
-        26;
-
-    const internetX = W / 2;
-    const firewallX = W / 2;
-    const coreX = W / 2;
 
     return (
 
-        <div
+        <svg
+            viewBox={`0 0 ${W} ${H}`}
             style={{
-                overflowX: "auto",
-                overflowY: "auto",
-                maxHeight: 650
+                width: "100%",
+                height: "100%",
+                overflow: "visible",
             }}
         >
 
-            <svg
-                width={W}
-                height={H}
-            >
+            {edges.map((edge, i) => {
 
-                {/* Internet */}
-                <text
-                    x={internetX}
-                    y={40}
-                    textAnchor="middle"
-                    fontSize="28"
-                >
-                    🌐
-                </text>
+                const from = nodes.find(n => n.id === edge.from)!;
+                const to = nodes.find(n => n.id === edge.to)!;
 
-                <text
-                    x={internetX}
-                    y={65}
-                    textAnchor="middle"
-                    fill="#00d9ff"
-                    fontSize="11"
-                >
-                    Internet
-                </text>
+                return (
+                    <line
+                        key={i}
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        stroke={to.color}
+                        strokeWidth={1}
+                        strokeOpacity={0.35}
+                        strokeDasharray="5 4"
+                    />
+                );
 
-                {/* Firewall */}
-                <line
-                    x1={internetX}
-                    y1={80}
-                    x2={firewallX}
-                    y2={120}
-                    stroke="#475569"
-                />
+            })}
 
-                <text
-                    x={firewallX}
-                    y={145}
-                    textAnchor="middle"
-                    fontSize="28"
-                >
-                    🔥
-                </text>
+            {nodes.map(node => {
 
-                <text
-                    x={firewallX}
-                    y={170}
-                    textAnchor="middle"
-                    fill="#ef4444"
-                    fontSize="11"
-                >
-                    Firewall
-                </text>
+                const size =
+                    node.id === "core"
+                        ? 80
+                        : 28;
 
-                {/* Core */}
-                <line
-                    x1={firewallX}
-                    y1={185}
-                    x2={coreX}
-                    y2={225}
-                    stroke="#475569"
-                />
+                return (
 
-                <text
-                    x={coreX}
-                    y={250}
-                    textAnchor="middle"
-                    fontSize="28"
-                >
-                    🔀
-                </text>
+                    <g key={node.id}>
 
-                <text
-                    x={coreX}
-                    y={275}
-                    textAnchor="middle"
-                    fill="#00d9ff"
-                    fontSize="11"
-                >
-                    Core Switch
-                </text>
+                        <image
+                            href={getImg(node.id)}
+                            x={node.x - size / 2}
+                            y={node.y - size / 2}
+                            width={size}
+                            height={size}
+                        />
 
-                {/* Switches */}
-                {switches.map((sw, index) => {
-
-                    const spacing =
-                        W /
-                        (switchCount + 1);
-
-                    const x =
-                        spacing *
-                        (index + 1);
-
-                    const y = 350;
-
-                    return (
-                        <g
-                            key={index}
+                        <text
+                            x={node.x}
+                            y={getLabelY(node)}
+                            textAnchor="middle"
+                            fill={node.color}
+                            fontSize={8}
+                            fontFamily="Consolas"
                         >
+                            {node.label}
+                        </text>
 
-                            <line
-                                x1={coreX}
-                                y1={290}
-                                x2={x}
-                                y2={y - 25}
-                                stroke="#334155"
-                            />
+                    </g>
 
-                            <text
-                                x={x}
-                                y={y}
-                                textAnchor="middle"
-                                fontSize="24"
-                            >
-                                🔌
-                            </text>
+                );
 
-                            <text
-                                x={x}
-                                y={y + 20}
-                                textAnchor="middle"
-                                fill="#22c55e"
-                                fontSize="10"
-                            >
-                                SW{sw.id}
-                            </text>
+            })}
 
-                        </g>
-                    );
-
-                })}
-
-                {/* Dispositivos */}
-                {switches.map(
-                    (
-                        sw,
-                        switchIndex
-                    ) => {
-
-                        const spacing =
-                            W /
-                            (switchCount + 1);
-
-                        const switchX =
-                            spacing *
-                            (switchIndex + 1);
-
-                        const start =
-                            switchIndex *
-                            devicesPerSwitch;
-
-                        const end =
-                            Math.min(
-                                start +
-                                    devicesPerSwitch,
-                                devices.length
-                            );
-
-                        const group =
-                            devices.slice(
-                                start,
-                                end
-                            );
-
-                        return group.map(
-                            (
-                                device,
-                                deviceIndex
-                            ) => {
-
-                                const x =
-                                    switchX;
-
-                                const y =
-                                    420 +
-                                    deviceIndex *
-                                        24;
-
-                                return (
-                                    <g
-                                        key={`${switchIndex}-${deviceIndex}`}
-                                    >
-
-                                        <line
-                                            x1={
-                                                switchX
-                                            }
-                                            y1={
-                                                365
-                                            }
-                                            x2={x}
-                                            y2={
-                                                y -
-                                                12
-                                            }
-                                            stroke={
-                                                device.color
-                                            }
-                                            strokeOpacity={
-                                                0.35
-                                            }
-                                        />
-
-                                        <text
-                                            x={
-                                                x -
-                                                8
-                                            }
-                                            y={
-                                                y +
-                                                4
-                                            }
-                                            textAnchor="end"
-                                            fontSize="12"
-                                        >
-                                            {
-                                                device.icon
-                                            }
-                                        </text>
-
-                                        <text
-                                            x={
-                                                x +
-                                                6
-                                            }
-                                            y={
-                                                y +
-                                                4
-                                            }
-                                            fontSize="9"
-                                            fill={
-                                                device.color
-                                            }
-                                            fontFamily="Consolas, monospace"
-                                        >
-                                            {
-                                                device.label
-                                            }
-                                        </text>
-
-                                    </g>
-                                );
-                            }
-                        );
-                    }
-                )}
-
-            </svg>
-
-        </div>
+        </svg>
 
     );
+
 }

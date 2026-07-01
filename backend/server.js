@@ -9,12 +9,12 @@ app.use(express.json());
 
 /* ==========================================
    CREAR PROYECTO
-========================================== */
+========================================== */   
 
 app.post("/projects", async (req, res) => {
 
     try {
-
+            
         const { nombre } = req.body;
 
         const configuracionInicial = {
@@ -100,24 +100,46 @@ app.put("/projects/:id", async (req, res) => {
     const { id } = req.params;
 
     const {
-        cfg,
-        rackSize
-    } = req.body;
+    cfg,
+    rackSize,
+    nombre
+} = req.body;
+
+const configuracion = JSON.stringify({
+    cfg,
+    rackSize
+});
+
+if (nombre) {
 
     await db.query(
         `
         UPDATE proyectos
-        SET configuracion=?
-        WHERE id=?
+        SET nombre = ?, configuracion = ?
+        WHERE id = ?
         `,
         [
-            JSON.stringify({
-                cfg,
-                rackSize
-            }),
+            nombre,
+            configuracion,
             id
         ]
     );
+
+} else {
+
+    await db.query(
+        `
+        UPDATE proyectos
+        SET configuracion = ?
+        WHERE id = ?
+        `,
+        [
+            configuracion,
+            id
+        ]
+    );
+
+}
 
     res.json({
         message: "Proyecto actualizado"

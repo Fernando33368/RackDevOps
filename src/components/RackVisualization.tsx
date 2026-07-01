@@ -13,7 +13,7 @@ const colors: Record<RackItem['type'], string> = {
     server:       '#22c55e',
     switch:       '#00d9ff',
     'poe-switch': '#f59e0b',
-    'patch-panel':'#64748b',
+    'patch-panel': '#64748b',
     ups:          '#a855f7',
 };
 
@@ -59,7 +59,7 @@ function RackUnit({ item }: { item: RackItem }) {
                     fontSize: 11,
                     fontWeight: 'bold',
                     color: c,
-                    fontFamily: 'Consolas, monospace',
+                    fontFamily: 'Consolas, monospace',  
                 }}>
                     {item.label}
                 </span>
@@ -67,7 +67,7 @@ function RackUnit({ item }: { item: RackItem }) {
             </div>
 
             {item.model && (
-                <span style={{ fontSize: 9, color: '#475569' }}>
+                <span style={{ fontSize: 9, color: '#ADD8E6' }}>
                     {item.model}
                 </span>
             )}
@@ -110,17 +110,21 @@ export default function RackVisualization({ items, totalUnits }: RackVisualizati
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                fontSize: 10,
-                color: '#475569',
-                marginBottom: 8,
+                fontSize: 14,
+                color: '#778899',
+                marginBottom: 20,
                 fontFamily: 'Consolas, monospace',
+                fontWeight: 'bold',
             }}>
                 <span>{usedUnits}U usadas</span>
                 <span>{freeUnits}U libres</span>
             </div>
 
+            <hr style={{ borderColor: '#B0C4DE', borderWidth: 3 }} />
+            <br></br>
+
             {/* slots del rack */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 30}}>
 
                 {items.map((item, i) => (
                     <RackUnit key={i} item={item} />
@@ -136,7 +140,7 @@ export default function RackVisualization({ items, totalUnits }: RackVisualizati
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: 10,
-                        color: '#334155',
+                        color: '#ADD8E6',
                         fontFamily: 'Consolas, monospace',
                     }}>
                         {freeUnits}U disponibles

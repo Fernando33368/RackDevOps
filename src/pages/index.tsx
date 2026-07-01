@@ -15,8 +15,10 @@ import NetworkTopology from '@/components/NetworkTopology';
 import NetworkScene3D from '@/components/NetworkScene3D';
 import CostEstimator from '@/components/CostEstimator';
 import RecommendationCard from '@/components/RecommendationCard';
-import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { useRef } from "react";
+import ProjectMenu from "@/components/ProjectMenu";
+import axios from "axios";
 
 // ── Spinner ──────────────────────────────────────────────────────
 function Spinner({ value, onChange, min = 0, max = 9999 }: {
@@ -59,19 +61,10 @@ export default function index() {
     const [tab, setTab] = useState<'dispositivos' | 'infraestructura'>('infraestructura');
 
     const [cfg, setCfg] = useState({
-    pcs: 0,
-    servers: 0,
-    cameras: 0,
-    phones: 0,
-    printers: 0,
-    sw24: 0,
-    sw48: 0,
-    poe24: 0,
-    poe48: 0,
-    routers: 0,
-    firewalls: 0,
-    aps: 0,
-});
+        pcs: 0, servers: 0, cameras: 0, phones: 0, printers: 0,
+        sw24: 0, sw48: 0, poe24: 0, poe48: 0,
+        routers: 0, firewalls: 0, aps: 0,
+    });
 
     const set = (k: keyof typeof cfg) => (v: number) =>
         setCfg(c => ({ ...c, [k]: v }));
@@ -79,6 +72,7 @@ export default function index() {
     const [rackSize, setRackSize] = useState<'12U' | '22U' | '36U' | '42U'>('22U');
     const projectId = localStorage.getItem("projectId");
     const navigate = useNavigate();
+    const [projectName, setProjectName] = useState("");
     const saveProject = async () => {
 
     try {
@@ -115,6 +109,10 @@ useEffect(() => {
             );
 
             if (!res.data) return;
+
+            if (res.data.nombre) {
+                setProjectName(res.data.nombre);
+            }
 
             const data =
                 typeof res.data.configuracion === "string"
@@ -220,16 +218,10 @@ useEffect(() => {
             }}>
                 {/* logo */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{
-                        width: 32, height: 32, borderRadius: 8,
-                        background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.3)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                        <Network size={16} color="#00d9ff" />
-                    </div>
+                    <img src="/image/Logo.png" alt="RackDevOps" style={{ width: 60, height: 60 }} />
                     <div>
-                        <div style={{ fontSize: 14, fontWeight: 'bold', letterSpacing: '0.03em' }}>NetArch Simulator Pro</div>
-                        <div style={{ fontSize: 9, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                        <div style={{ fontSize: 14, fontWeight: 'bold', letterSpacing: '0.03em' }}>RackDevOps</div>
+                        <div style={{ fontSize: 9, color: 'cyan', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                             Diseño de Infraestructura de Red
                         </div>
                     </div>
@@ -249,38 +241,7 @@ useEffect(() => {
                 
                 {/* reloj + estado */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-<button
-    onClick={() => navigate("/")}
-    style={{
-        width: '100px',
-            height: '45px',
-            borderRadius: '8px',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            background: '#3b82f6',
-            color: 'white'
-    }}
->
-    Inicio
-</button>
-
-<button
-    onClick={saveProject}
-    style={{
-        width: '100px',
-            height: '45px',
-            borderRadius: '8px',
-            border: 'none',
-            cursor: 'pointer',
-            fontWeight: 'bold',
-            background: '#22c55e',
-            color: 'white'
-    }}
->
-    Guardar Proyecto
-</button>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748b' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'cyan' }}>
                         <Clock size={14} />{time}
                     </div>
                     <div style={{
@@ -292,6 +253,13 @@ useEffect(() => {
                         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
                         Sistema Activo
                     </div>
+                    <ProjectMenu
+                        projectId={projectId}
+                        projectName={projectName}
+                        setProjectName={setProjectName}
+                        cfg={cfg}
+                        rackSize={rackSize}
+                    />
                 </div>
             </header>
 
@@ -412,20 +380,10 @@ useEffect(() => {
                     )}
                 </aside>
 
-                {/* ═══ PANEL CENTRAL ═══ */}
-                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: '#060d16' }}>
+                {/* ═══ PANEL CENTRAL ═══ */} 
+                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: 'url(/image/Gift.gif)' }}>
 
-                    {/* escena 3D */}
-                    <GlowCard style={{ height: 260, padding: 0, overflow: 'hidden', position: 'relative' }}>
-                        <div style={{ position: 'absolute', top: 10, left: 14, fontSize: 9, color: 'rgba(0,217,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10 }}>
-                            Vista 3D · Arrastra para rotar
-                        </div>
-                        <NetworkScene3D config={{
-                            pcs: cfg.pcs, servers: cfg.servers, cameras: cfg.cameras,
-                            phones: cfg.phones, printers: cfg.printers,
-                            switchCount, rackUnits: rackU,
-                        }} />
-                    </GlowCard>
+
 
                     {/* análisis de capacidad */}
                     <GlowCard>
@@ -515,14 +473,14 @@ useEffect(() => {
                 {/* ═══ PANEL DERECHO — RACK ═══ */}
                 <aside style={{
                     borderLeft: '1px solid #1e2d42', overflowY: 'auto',
-                    background: 'rgba(7,17,29,0.6)', padding: 16,
+                    background: 'url(/image/rack1.png)', padding: 20 
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <Box size={16} color="#22c55e" />
-                            <span style={{ fontSize: 13, fontWeight: 'bold' }}>Rack {rackSize}</span>
+                            <Box size={16} color="cyan" />
+                            <span style={{ fontSize: 13, fontWeight: 'bold', color:'#B0C4DE'}}>Rack {rackSize}</span>
                         </div>
-                        <span style={{ fontSize: 10, color: '#475569', fontFamily: 'Consolas, monospace' }}>
+                        <span style={{ fontSize: 12, color: 'cyan', fontFamily: 'Consolas, monospace', fontWeight: 'bold' }}>
                             {usedRackU}U / {rackU}
                         </span>
                     </div>
