@@ -190,7 +190,7 @@ export default function Index() {
                 
                 {/* reloj + estado */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'cyan' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, color: 'cyan', fontWeight: 'bold' }}>
                         <Clock size={14} />
                         {time}
                     </div>
@@ -391,8 +391,17 @@ export default function Index() {
                     <GlowCard glowColor="#22c55e">
                         {label('Topología de Red')}
                         <NetworkTopology
-                            pcs={cfg.pcs} servers={cfg.servers} cameras={cfg.cameras}
-                            phones={cfg.phones} printers={cfg.printers} switches={switchCount}
+                            pcs={cfg.pcs} 
+                            servers={cfg.servers} 
+                            cameras={cfg.cameras}
+                            phones={cfg.phones} 
+                            printers={cfg.printers} 
+                            switches={switchCount}
+                            nas={cfg.nas}  
+                            cameraptz={cfg.ptz} 
+                            accessPoints={cfg.accesspoints}
+                            antenasptp={cfg.ptp}
+                            antenasptmp={cfg.ptmp}
                         />
                     </GlowCard>
 
