@@ -40,15 +40,15 @@ export default function NetworkTopology({
 }: TopologyProps) {
 
     const W = 900;
-    const H = 650;
+    const H = 800;
 
     const cx = W / 2;
     const cy = H / 2;
 
     const nodes: Node[] = [
-        { id: "internet", label: "Internet", x: cx, y: 20, color: "#00ffff"},
-        { id: "firewall", label: "Firewall", x: cx, y: 60, color: "#ff9800"},
-        { id: "router", label: "Router", x: cx, y: 100, color: "#38bdf8"},
+        { id: "internet", label: "Internet", x: cx, y: 20, color: "#00FFFF"},
+        { id: "firewall", label: "Firewall", x: cx, y: 60, color: "#00FF00"},
+        { id: "router", label: "Router", x: cx, y: 100, color: "#87CEFA"},
         { id: "core", label: switches > 1 ? `Switch Core (${switches})` : "Switch Core", x: cx, y: 170, color: "#00d9ff"},
     ];
 
@@ -119,8 +119,8 @@ export default function NetworkTopology({
         columns = 4,
     ) {
 
-        const gapX = 35;
-        const gapY = 35;
+        const gapX = 40;
+        const gapY = 40;
 
         for (let i = 0; i < count; i++) {
 
@@ -151,16 +151,16 @@ export default function NetworkTopology({
         enlaces: {x: 340, y: 420}
     };
 
-    addGroup(pcs, 'pc', 'PC', '#94a3b8', zones.usuarios.x, zones.usuarios.y, 4);
-    addGroup(servers, 'srv', 'Servidor', '#22c55e', zones.servicios.x, zones.servicios.y, 4);
-    addGroup(cameras, 'camera', 'Cámara', '#f59e0b', zones.seguridad.x, zones.seguridad.y, 4);
-    addGroup(phones, 'phone', 'VoIP', '#a855f7', zones.wireless.x, zones.wireless.y, 4);
-    addGroup(printers, 'printer', 'Impresora', '#ef4444', zones.enlaces.x, zones.enlaces.y, 4);
-    addGroup(nas, 'nas', 'NAS', '#3b82f6', zones.servicios.x, zones.servicios.y + 80, 4);
-    addGroup(cameraptz, 'cameraptz', 'Cámara PTZ', '#f97316', zones.seguridad.x, zones.seguridad.y + 80, 4);
-    addGroup(accessPoints, 'accesspoint', 'Punto de Acceso', '#8b5cf6', zones.wireless.x, zones.wireless.y + 80, 4);
-    addGroup(antenasptp, 'antenaPTP', 'Antena PTP', '#f43f5e', zones.enlaces.x, zones.enlaces.y + 80, 4);
-    addGroup(antenasptmp, 'antenaPTMP', 'Antena PTMP', '#10b981', zones.enlaces.x + 80, zones.enlaces.y + 80, 4);
+    addGroup(pcs, 'pc', 'PC', '#00FF7F', zones.usuarios.x - 50, zones.usuarios.y, 4);
+    addGroup(servers, 'srv', 'Server', '#FF8C00', zones.servicios.x - 20, zones.servicios.y + 40, 4);
+    addGroup(cameras, 'camera', 'Cám', '#7FFFD4', zones.seguridad.x - 6, zones.seguridad.y, 4);
+    addGroup(phones, 'phone', 'VoIP', '#1E90FF', zones.wireless.x + 680, zones.wireless.y - 200, 4);
+    addGroup(printers, 'printer', 'Impre', '#B0C4DE', zones.enlaces.x - 350, zones.enlaces.y + 100, 4);
+    addGroup(nas, 'nas', 'NAS', '#FF0000', zones.servicios.x - 20, zones.servicios.y + 340, 4);
+    addGroup(cameraptz, 'cameraptz', 'CámPTZ', '#40E0D0', zones.seguridad.x + 200, zones.seguridad.y, 4);
+    addGroup(accessPoints, 'accesspoint', 'PAccess', '#FFFF00', zones.wireless.x + 280, zones.wireless.y + 100, 4);
+    addGroup(antenasptp, 'antenaPTP', 'AntPTP', '#FF00FF', zones.enlaces.x + 265, zones.enlaces.y + 100, 4);
+    addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#FFD700', zones.enlaces.x + 460, zones.enlaces.y + 100, 4);
 
     function getLabelY(node: Node) {
         return node.id === 'core'
@@ -211,8 +211,8 @@ export default function NetworkTopology({
 
                 const size =
                     node.id === 'core'
-                        ? 80
-                        : 35;
+                        ? 100
+                        : 30;
 
                 return (
                     <g key={node.id}>
@@ -235,8 +235,8 @@ export default function NetworkTopology({
                             fill={node.color}
                             fontSize={
                                 node.id === 'core'
-                                    ? 10
-                                    : 11
+                                    ? 15
+                                    : 7
                             }
                             fontFamily="Consolas, monospace"
                         >
