@@ -100,7 +100,21 @@ type RackVisualizationProps = {
 };
 
 export default function RackVisualization({ items, totalUnits }: RackVisualizationProps) {
-    const usedUnits = items.reduce((a, b) => a + b.units, 0);
+
+    let occupied = 0;
+    let overflow = false;
+
+    const visibleItems: RackItem[] = [];
+    for (const item of items) {
+        if (occupied + item.units > totalUnits) {
+            overflow = true;
+            break;
+        }
+        visibleItems.push(item);
+        occupied += item.units;
+    }
+
+    const usedUnits = occupied;
     const freeUnits = totalUnits - usedUnits;
 
     return (
@@ -108,6 +122,9 @@ export default function RackVisualization({ items, totalUnits }: RackVisualizati
 
             {/* encabezado */}
             <div style={{
+                background: 'rgba(119, 136, 153, 0.4)',
+                border: '1px solid rgba(119, 136, 153, 0.6)',
+                borderRadius: 4,
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontSize: 14,
@@ -120,13 +137,31 @@ export default function RackVisualization({ items, totalUnits }: RackVisualizati
                 <span>{freeUnits}U libres</span>
             </div>
 
+            {overflow && (
+                <div style={{
+                    marginBottom: 12,
+                    padding: '10px',
+                    borderRadius: 8,
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '2px solid rgba(239, 68, 68, 0.4)',
+                    color: '#ef4444',
+                    fontSize: 11,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    fontFamily: 'Consolas, monospace',
+                }}>
+                    ⚠ Rack LLeno: <br></br>
+                    No hay suficiente espacio.
+                </div>
+            )}
+
             <hr style={{ borderColor: '#B0C4DE', borderWidth: 3 }} />
             <br></br>
 
             {/* slots del rack */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 30}}>
 
-                {items.map((item, i) => (
+                {visibleItems.map((item, i) => (
                     <RackUnit key={i} item={item} />
                 ))}
 

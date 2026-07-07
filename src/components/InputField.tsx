@@ -35,26 +35,20 @@ export default function InputField({
             </label>
 
             <input
-                type="number"
-                value={value}
-                min={min}
-                max={max}
-                onChange={e => onChange(Number(e.target.value))}
-                style={{
-                    background: '#1a2332',
-                    border: '1px solid #334155',
-                    borderRadius: 8,
-                    padding: '8px 12px',
-                    color: '#e2e8f0',
-                    fontSize: 14,
-                    fontFamily: 'Consolas, monospace',
-                    width: '100%',
-                    outline: 'none',
-                    boxSizing: 'border-box',
-                }}
-            />
-
-        </div>
-    );
-
+                type="number" value={value} min={min} max={max} onChange={e => onChange(Number(e.target.value))}
+                    style={{
+                        background: '#1a2332',
+                        border: '1px solid #334155',
+                        borderRadius: 8,
+                        padding: '8px 12px',
+                        color: '#e2e8f0',
+                        fontSize: 14,
+                        fontFamily: 'Consolas, monospace',
+                        width: '100%',
+                        outline: 'none',
+                        boxSizing: 'border-box',
+                    }}
+                />
+            </div>
+        );
 }

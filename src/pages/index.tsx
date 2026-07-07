@@ -61,9 +61,10 @@ export default function index() {
     const [tab, setTab] = useState<'dispositivos' | 'infraestructura'>('infraestructura');
 
     const [cfg, setCfg] = useState({
-        pcs: 0, servers: 0, cameras: 0, phones: 0, printers: 0,
-        sw24: 0, sw48: 0, poe24: 0, poe48: 0,
-        routers: 0, firewalls: 0, aps: 0,
+        pcs: 0, servers: 0, cameras: 0, ptz: 0, phones: 0, printers: 0,
+        nas: 0, accesspoints: 0, ptp: 0, ptmp: 0, sw24: 0, 
+        sw48: 0, poe24: 0, poe48: 0, routers: 0, firewalls: 0, 
+        aps: 0,
     });
 
     const set = (k: keyof typeof cfg) => (v: number) =>
@@ -141,23 +142,42 @@ useEffect(() => {
     const rackU = parseInt(rackSize);
 
     // cálculos
-    const totalHosts   = cfg.pcs + cfg.servers + cfg.cameras + cfg.phones + cfg.printers;
+    const totalHosts   = cfg.pcs + cfg.servers + cfg.cameras + cfg.phones + cfg.printers + cfg.nas + cfg.accesspoints + cfg.ptp + cfg.ptmp;
     const totalPorts   = cfg.sw24 * 24 + cfg.sw48 * 48 + cfg.poe24 * 24 + cfg.poe48 * 48;
     const usedPorts    = totalHosts + cfg.aps;
-    const poeDevices   = cfg.cameras + cfg.phones;
+    const poeDevices   = cfg.cameras + cfg.phones + cfg.ptz + cfg.accesspoints + cfg.ptp + cfg.ptmp;
     const poePorts     = cfg.poe24 * 24 + cfg.poe48 * 48;
-    const poeWatts     = cfg.cameras * 15 + cfg.phones * 8;
+    const poeWatts     = cfg.cameras * 15 + cfg.phones * 8 + cfg.ptz * 30 + cfg.accesspoints * 18 + cfg.ptp * 12 + cfg.ptmp * 18;
     const switchCount  = cfg.sw24 + cfg.sw48 + cfg.poe24 + cfg.poe48;
     const utilPct      = totalPorts > 0 ? Math.round((usedPorts / totalPorts) * 100) : 0;
     const projected    = Math.round(totalHosts * 1.3);
-    const ipsAvail     = 254 - totalHosts;
-    const subnetLabel  = totalHosts <= 30 ? '/27' : totalHosts <= 62 ? '/26' : totalHosts <= 126 ? '/25' : '/24';
+    const ipsAvail     = Math.max(254 - totalHosts, 0);
+    const subnetLabel  = totalHosts <= 30 ? '/27' : totalHosts <= 62 ? '/26' : totalHosts <= 126 ? '/25' : totalHosts <= 254 ?'/24' : totalHosts <= 510 ? '/23' :  '/22';
     const bwGbps       = (cfg.sw24 * 24 + cfg.sw48 * 48 + cfg.poe24 * 24 + cfg.poe48 * 48).toFixed(0);
-    const [time]       = useState(() => new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+
+    const [time, setTime] = useState("");
+
+    useEffect(() => {
+        const updateTime = () => {
+            setTime(
+                new Date().toLocaleTimeString("es-MX", { 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit',
+                })
+            );
+    };
+
+    updateTime(); // Actualiza la horainmediatamente 
+
+    const interval = setInterval(updateTime, 1000); // Actualiza la hora cada segundo
+    return () => clearInterval(interval); // Limpia el intervalo al desmontar el componente
+}, []);
 
     // rack items
     const rackItems = useMemo<RackItem[]>(() => {
         const items: RackItem[] = [];
+
         for (let i = 0; i < cfg.routers; i++)
             items.push({ type: 'router', units: 1, label: `Router Core ${i + 1}`, model: 'Cisco ISR 4331', status: 'online' });
         for (let i = 0; i < cfg.firewalls; i++)
@@ -241,8 +261,9 @@ useEffect(() => {
                 
                 {/* reloj + estado */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'cyan' }}>
-                        <Clock size={14} />{time}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 15, color: 'cyan', fontWeight: 'bold' }}>
+                        <Clock size={14} />
+                        {time}
                     </div>
                     <div style={{
                         display: 'flex', alignItems: 'center', gap: 6,
@@ -364,8 +385,13 @@ useEffect(() => {
                                 { key: 'pcs',      label: 'PCs / Workstations', icon: Monitor, color: '#00d9ff' },
                                 { key: 'servers',  label: 'Servidores',          icon: Server,  color: '#22c55e' },
                                 { key: 'cameras',  label: 'Cámaras IP',          icon: Camera,  color: '#f59e0b' },
+                                { key: 'ptz', label: 'Cámaras PTZ', icon: Camera, color: '#f59e0b'},
                                 { key: 'phones',   label: 'Teléfonos VoIP',      icon: Phone,   color: '#a855f7' },
                                 { key: 'printers', label: 'Impresoras',          icon: Printer, color: '#ef4444' },
+                                { key: 'nas', label: 'Almacenamiento NAS', icon: HardDrive, color: '#22c55e' },
+                                { key: 'accesspoints', label: 'Access Points', icon: Wifi, color: '#a855f7' },
+                                { key: 'ptp', label: 'Antenas PTP', icon: Globe, color: '#3b82f6' },
+                                { key: 'ptmp', label: 'Antenas PTMP', icon: Globe, color: '#3b82f6' }
                             ].map(({ key, label: lbl, icon: Icon, color }) => (
                                 <GlowCard key={key} glowColor={color}>
                                     <InputField
@@ -381,7 +407,7 @@ useEffect(() => {
                 </aside>
 
                 {/* ═══ PANEL CENTRAL ═══ */} 
-                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: 'url(/image/Gift.gif)' }}>
+                <main style={{ overflowY: 'auto', padding: 16, display: 'flex', flexDirection: 'column', gap: 16, background: 'url(/image/GIF.gif)' }}>
 
 
 
@@ -443,8 +469,17 @@ useEffect(() => {
                     <GlowCard glowColor="#22c55e">
                         {label('Topología de Red')}
                         <NetworkTopology
-                            pcs={cfg.pcs} servers={cfg.servers} cameras={cfg.cameras}
-                            phones={cfg.phones} printers={cfg.printers} switches={switchCount}
+                            pcs={cfg.pcs} 
+                            servers={cfg.servers} 
+                            cameras={cfg.cameras}
+                            phones={cfg.phones} 
+                            printers={cfg.printers} 
+                            switches={switchCount}
+                            nas={cfg.nas}  
+                            cameraptz={cfg.ptz} 
+                            accessPoints={cfg.accesspoints}
+                            antenasptp={cfg.ptp}
+                            antenasptmp={cfg.ptmp}
                         />
                     </GlowCard>
 
