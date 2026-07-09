@@ -78,11 +78,18 @@ export default function index() {
 
     try {
 
+        const token = localStorage.getItem("token");
+
         await axios.put(
             `http://localhost:3000/projects/${projectId}`,
             {
                 cfg,
                 rackSize
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
             }
         );
 
@@ -105,8 +112,15 @@ useEffect(() => {
 
         try {
 
+            const token = localStorage.getItem("token");
+
             const res = await axios.get(
-                `http://localhost:3000/projects/${projectId}`
+                `http://localhost:3000/projects/${projectId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
 
             if (!res.data) return;

@@ -13,8 +13,15 @@ export default function Home() {
 
         try {
 
+            const token = localStorage.getItem("token");
+
             const res = await axios.get(
-                "http://localhost:3000/projects"
+                "http://localhost:3000/projects",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
 
             setProjects(res.data);
@@ -43,10 +50,17 @@ export default function Home() {
 
         try {
 
+            const token = localStorage.getItem("token");
+
             const res = await axios.post(
                 "http://localhost:3000/projects",
                 {
                     nombre: projectName
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
                 }
             );
 
@@ -86,8 +100,15 @@ export default function Home() {
 
     try {
 
+        const token = localStorage.getItem("token");
+
         await axios.delete(
-            `http://localhost:3000/projects/${id}`
+            `http://localhost:3000/projects/${id}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
         );
 
         loadProjects();

@@ -67,11 +67,13 @@ export default function NetworkTopology({
         if (id === 'core')
             return '/image/SwitchCore.png';
 
-        if (id === "core")
-            return "/image/SwitchCore.png";
+
 
         if (id.startsWith("pc"))
             return "/image/PCS.png";
+
+        if (id.startsWith("srv"))
+            return "/image/Servidor.png";
 
         if (id.startsWith('cameraptz'))
             return '/image/CamPTZ.png';
@@ -81,6 +83,9 @@ export default function NetworkTopology({
 
         if (id.startsWith("cam"))
             return "/image/camara_ip.png";
+
+        if (id.startsWith("printer"))
+            return "/image/impresora.png";
 
         if (id.startsWith("phone"))
             return "/image/telefono_voip.png";
@@ -151,16 +156,16 @@ export default function NetworkTopology({
         enlaces: {x: 340, y: 420}
     };
 
-    addGroup(pcs, 'pc', 'PC', '#00FF7F', zones.usuarios.x - 50, zones.usuarios.y, 4);
-    addGroup(servers, 'srv', 'Server', '#FF8C00', zones.servicios.x - 20, zones.servicios.y + 40, 4);
-    addGroup(cameras, 'camera', 'Cám', '#7FFFD4', zones.seguridad.x - 6, zones.seguridad.y, 4);
-    addGroup(phones, 'phone', 'VoIP', '#1E90FF', zones.wireless.x + 680, zones.wireless.y - 200, 4);
-    addGroup(printers, 'printer', 'Impre', '#B0C4DE', zones.enlaces.x - 350, zones.enlaces.y + 100, 4);
-    addGroup(nas, 'nas', 'NAS', '#FF0000', zones.servicios.x - 20, zones.servicios.y + 340, 4);
-    addGroup(cameraptz, 'cameraptz', 'CámPTZ', '#40E0D0', zones.seguridad.x + 200, zones.seguridad.y, 4);
-    addGroup(accessPoints, 'accesspoint', 'PAccess', '#FFFF00', zones.wireless.x + 280, zones.wireless.y + 100, 4);
-    addGroup(antenasptp, 'antenaPTP', 'AntPTP', '#FF00FF', zones.enlaces.x + 265, zones.enlaces.y + 100, 4);
-    addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#FFD700', zones.enlaces.x + 460, zones.enlaces.y + 100, 4);
+    addGroup(pcs, 'pc', 'PC', '#00FF7F', zones.usuarios.x - 25, zones.usuarios.y, 4);
+    addGroup(servers, 'srv', 'Server', '#FF8C00', zones.servicios.x + 5, zones.servicios.y + 40, 4);
+    addGroup(cameras, 'camera', 'Cám', '#7FFFD4', zones.seguridad.x - 10, zones.seguridad.y, 4);
+    addGroup(phones, 'phone', 'VoIP', '#1E90FF', zones.wireless.x + 650, zones.wireless.y - 200, 4);
+    addGroup(printers, 'printer', 'Impre', '#B0C4DE', zones.enlaces.x - 320, zones.enlaces.y + 100, 4);
+    addGroup(nas, 'nas', 'NAS', '#FF0000', zones.servicios.x + 10, zones.servicios.y + 340, 4);
+    addGroup(cameraptz, 'cameraptz', 'CámPTZ', '#40E0D0', zones.seguridad.x + 180, zones.seguridad.y, 4);
+    addGroup(accessPoints, 'accesspoint', 'PAccess', '#FFFF00', zones.wireless.x + 270, zones.wireless.y + 100, 4);
+    addGroup(antenasptp, 'antenaPTP', 'AntPTP', '#FF00FF', zones.enlaces.x + 245, zones.enlaces.y + 100, 4);
+    addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#FFD700', zones.enlaces.x + 430, zones.enlaces.y + 100, 4);
 
     function getLabelY(node: Node) {
         return node.id === "core"
@@ -187,14 +192,15 @@ export default function NetworkTopology({
                 return (
                     <line
                         key={i}
+                        className="flow-line"
                         x1={from.x}
                         y1={from.y}
                         x2={to.x}
                         y2={to.y}
                         stroke={to.color}
-                        strokeWidth={1}
-                        strokeOpacity={0.35}
-                        strokeDasharray="5 4"
+                        strokeWidth={2}
+                        strokeOpacity={0.5}
+                        strokeDasharray="8 6"
                     />
                 );
 

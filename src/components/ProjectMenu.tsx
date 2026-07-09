@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../auth/AuthContext";
 import {
     Folder,
     Save,
@@ -26,6 +27,8 @@ export default function ProjectMenu({
 }: Props) {
 
     const navigate = useNavigate();
+
+    const { user, logout } = useAuth();
 
     const [open, setOpen] = useState(false);
 
@@ -63,12 +66,19 @@ export default function ProjectMenu({
 
         try {
 
+            const token = localStorage.getItem("token");
+
             await axios.put(
                 `http://localhost:3000/projects/${projectId}`,
                 {
                     cfg,
                     rackSize,
                     nombre: projectName,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -95,12 +105,19 @@ export default function ProjectMenu({
 
         try {
 
+            const token = localStorage.getItem("token");
+
             await axios.put(
                 `http://localhost:3000/projects/${projectId}`,
                 {
                     nombre: nuevoNombre,
                     cfg,
                     rackSize,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
                 }
             );
 
@@ -120,7 +137,51 @@ export default function ProjectMenu({
 
     };
 
+    const cerrarSesion = () => {
+
+    logout();
+
+    localStorage.removeItem("projectId");
+
+    navigate("/");
+
+};
+
     return (
+
+    <>
+        <div
+            style={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+                gap: "15px",
+                marginBottom: "15px",
+            }}
+        >
+            <span
+                style={{
+                    color: "white",
+                    fontWeight: "bold",
+                }}
+            >
+                👤 {user?.nombre}
+            </span>
+
+            <button
+                onClick={cerrarSesion}
+                style={{
+                    background: "#dc2626",
+                    color: "white",
+                    border: "none",
+                    padding: "8px 14px",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                }}
+            >
+                Cerrar sesión
+            </button>
+        </div>
 
         <div
             ref={menuRef}
@@ -263,7 +324,9 @@ export default function ProjectMenu({
 
         </div>
 
-    );
+    </>
+
+);
 
 }
 
