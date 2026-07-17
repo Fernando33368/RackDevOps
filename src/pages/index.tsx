@@ -4,6 +4,8 @@ import {
     Network, Cpu, Zap, HardDrive, Activity,
     Wifi, Router, Shield, Clock, Globe, Box,
     ChevronUp, ChevronDown, BarChart2,
+    Cctv,
+    Radio,
 } from 'lucide-react';
 
 import GlowCard from '@/components/GlowCard';
@@ -57,9 +59,25 @@ export default function Index() {
     const [tab, setTab] = useState<'dispositivos' | 'infraestructura'>('infraestructura');
 
     const [cfg, setCfg] = useState({
-        pcs: 0, servers: 0, cameras: 0, ptz: 0, phones: 0, printers: 0,
-        nas: 0, accesspoints: 0, ptp: 0, ptmp: 0, sw24: 0, 
-        sw48: 0, poe24: 0, poe48: 0, routers: 0, firewalls: 0, 
+        pcs: 0, 
+        servers: 0, 
+        cameras: 0, 
+        ptz: 0, 
+        phones: 0, 
+        printers: 0,
+        nas: 0, 
+        accesspoints: 0, 
+        ptp: 0, 
+        ptmp: 0, 
+        sw24: 0, 
+        sw48: 0, 
+        poe24: 0, 
+        poe48: 0, 
+
+        routersInfra: 0, // Routers Fisicos (Rack y costos)
+        routersTopo: 0, // Routers que aparecen en la topologia
+
+        firewalls: 0, 
         aps: 0,
     });
 
@@ -106,18 +124,18 @@ export default function Index() {
     const rackItems = useMemo<RackItem[]>(() => {
         const items: RackItem[] = [];
 
-        for (let i = 0; i < cfg.routers; i++)
-            items.push({ type: 'router', units: 1, label: `Router Core ${i + 1}`, model: 'Cisco ISR 4331', status: 'online' });
+        for (let i = 0; i < cfg.routersInfra; i++)
+            items.push({type: 'router', units: 1, label: `Router Core ${i + 1}`, model: 'Cisco ISR 4331', status: 'online' });
         for (let i = 0; i < cfg.firewalls; i++)
-            items.push({ type: 'firewall', units: 1, label: `Firewall ${i + 1}`, model: 'FortiGate 60F', status: 'online' });
+            items.push({type: 'firewall', units: 1, label: `Firewall ${i + 1}`, model: 'FortiGate 60F', status: 'online' });
         for (let i = 0; i < Math.min(cfg.servers, 6); i++)
-            items.push({ type: 'server', units: 2, label: `Servidor ${i + 1}`, model: 'Dell PowerEdge R750', status: 'online', load: 45 + i * 10 });
+            items.push({type: 'server', units: 2, label: `Servidor ${i + 1}`, model: 'Dell PowerEdge R750', status: 'online', load: 45 + i * 10 });
         for (let i = 0; i < Math.min(cfg.poe24 + cfg.poe48, 3); i++)
-            items.push({ type: 'poe-switch', units: 1, label: `Switch PoE ${i + 1}`, status: 'online' });
+            items.push({type: 'poe-switch', units: 1, label: `Switch PoE ${i + 1}`, status: 'online' });
         for (let i = 0; i < Math.min(cfg.sw24 + cfg.sw48, 3); i++)
-            items.push({ type: 'switch', units: 1, label: `Switch GbE ${i + 1}`, status: 'online' });
-        items.push({ type: 'patch-panel', units: 1, label: 'Patch Panel Cat6 48p' });
-        items.push({ type: 'ups', units: 2, label: 'UPS 3000VA Online' });
+            items.push({type: 'switch', units: 1, label: `Switch GbE ${i + 1}`, status: 'online' });
+            items.push({ type: 'patch-panel', units: 1, label: 'Patch Panel Cat6 48p' });
+            items.push({ type: 'ups', units: 2, label: 'UPS 3000VA Online' });
         return items;
     }, [cfg]);
 
@@ -234,6 +252,8 @@ export default function Index() {
                         ))}
                     </div>
 
+                    {/* ═══ PANEL IZQUIERDO INFRAESTRUCTURA ═══ */}
+
                     {tab === 'infraestructura' ? (
                         <>
                             {/* tamaño rack */}
@@ -290,7 +310,7 @@ export default function Index() {
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
                                     <div>
                                         {label('Routers')}
-                                        <Spinner value={cfg.routers} onChange={set('routers')} max={4} />
+                                        <Spinner value={cfg.routersInfra} onChange={set('routersInfra')} max={4} />
                                     </div>
                                     <div>
                                         {label('Firewalls')}
@@ -298,22 +318,24 @@ export default function Index() {
                                     </div>
                                 </div>
                                 {label('Access Points WiFi', '#a855f7')}
-                                <Spinner value={cfg.aps} onChange={set('aps')} />
+                                <Spinner value={cfg.aps} onChange={set('aps')}/>
                             </GlowCard>
                         </>
                     ) : (
                         <>
+                        {/* ═══ PANEL IZQUIERDO DISPOSITIVOS ═══ */}
                             {[
                                 { key: 'pcs',      label: 'PCs / Workstations', icon: Monitor, color: '#00d9ff' },
                                 { key: 'servers',  label: 'Servidores',          icon: Server,  color: '#22c55e' },
-                                { key: 'cameras',  label: 'Cámaras IP',          icon: Camera,  color: '#f59e0b' },
-                                { key: 'ptz', label: 'Cámaras PTZ', icon: Camera, color: '#f59e0b'},
+                                { key: 'cameras',  label: 'Cámaras IP',          icon: Cctv,  color: '#f59e0b' },
+                                { key: 'ptz', label: 'Cámaras PTZ', icon: Cctv, color: '#f59e0b'},
                                 { key: 'phones',   label: 'Teléfonos VoIP',      icon: Phone,   color: '#a855f7' },
                                 { key: 'printers', label: 'Impresoras',          icon: Printer, color: '#ef4444' },
                                 { key: 'nas', label: 'Almacenamiento NAS', icon: HardDrive, color: '#22c55e' },
                                 { key: 'accesspoints', label: 'Access Points', icon: Wifi, color: '#a855f7' },
-                                { key: 'ptp', label: 'Antenas PTP', icon: Globe, color: '#3b82f6' },
-                                { key: 'ptmp', label: 'Antenas PTMP', icon: Globe, color: '#3b82f6' }
+                                { key: 'ptp', label: 'Antenas PTP', icon: Radio, color: '#3b82f6' },
+                                { key: 'ptmp', label: 'Antenas PTMP', icon: Radio, color: '#3b82f6' },
+                                {key: 'routersTopo', label: 'Routers', icon: Router, color: '#22c55e'},
                             ].map(({ key, label: lbl, icon: Icon, color }) => (
                                 <GlowCard key={key} glowColor={color}>
                                     <InputField
@@ -402,6 +424,7 @@ export default function Index() {
                             accessPoints={cfg.accesspoints}
                             antenasptp={cfg.ptp}
                             antenasptmp={cfg.ptmp}
+                            routersTopo={cfg.routersTopo}
                         />
                     </GlowCard>
 
@@ -409,13 +432,24 @@ export default function Index() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                         <GlowCard glowColor="#22c55e">
                            <CostEstimator
+                            pcs={cfg.pcs}
                             servers={cfg.servers}
+                            cameras={cfg.cameras}
+                            phones={cfg.phones}
+                            cameraptz={cfg.ptz}
+                            printers={cfg.printers}
+                            nas={cfg.nas}
+                            accessPoints={cfg.accesspoints}
+                            antenasptp={cfg.ptp}
+                            antenasptmp={cfg.ptmp}
+                            routersTopo={cfg.routersTopo}
+
                             switches24={cfg.sw24}
                             switches48={cfg.sw48}
                             poeSwitches24={cfg.poe24}
                             poeSwitches48={cfg.poe48}
                             rackSize={rackSize}
-                            routers={cfg.routers}
+                            routerCore={cfg.routersInfra}
                             firewalls={cfg.firewalls}
                             aps={cfg.aps}
                             />

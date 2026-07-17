@@ -3,3 +3,16 @@
 @import 'tailwindcss';
 
 @import './themes.css' layer(theme);
+
+.flow-line{
+    animation: flow 0.8s linear infinite;
+}
+
+@keyframes flow{
+    from{
+        stroke-dashoffset:0;
+    }
+    to{
+        stroke-dashoffset:-14;
+    }
+}

@@ -10,6 +10,7 @@ type TopologyProps = {
     accessPoints: number;
     antenasptp: number;
     antenasptmp: number;
+    routersTopo: number;
 };
 
 type Node = {
@@ -36,42 +37,36 @@ export default function NetworkTopology({
     cameraptz,
     accessPoints,
     antenasptp,
-    antenasptmp
+    antenasptmp,
+    routersTopo,
 }: TopologyProps) {
 
-    const W = 900;
-    const H = 800;
+    const W = 1200;
+    const H = 1300;
 
     const cx = W / 2;
     const cy = H / 2;
 
     const nodes: Node[] = [
-        { id: "internet", label: "Internet", x: cx, y: 20, color: "#00FFFF"},
-        { id: "firewall", label: "Firewall", x: cx, y: 60, color: "#00FF00"},
-        { id: "router", label: "Router", x: cx, y: 100, color: "#87CEFA"},
-        { id: "core", label: switches > 1 ? `Switch Core (${switches})` : "Switch Core", x: cx, y: 170, color: "#00d9ff"},
+        { id: "rack", label: "Rack Principal", x: cx, y: 80, color: "#00FFFF" },
     ];
 
     const edges: Edge[] = [];
 
-    edges.push(
-        {from: "internet", to: "firewall"},
-        {from: "firewall", to: "router"},
-        {from: "router", to: "core"}
-    );  
+
 
     // Función para obtener la imagen correspondiente a cada nodo
     function getImg(id: string) {
         console.log(id);
 
-        if (id === 'core')
-            return '/image/SwitchCore.png';
+        if (id === 'rack')
+            return '/image/rack.png';
 
-        if (id.startsWith('pc'))
-            return '/image/PCS.png';
+        if (id.startsWith("pc"))
+            return "/image/PCS.png";
 
-        if (id.startsWith('srv'))
-            return '/image/servidor.png';
+        if (id.startsWith("srv"))
+            return "/image/Servidor.png";
 
         if (id.startsWith('cameraptz'))
             return '/image/CamPTZ.png';
@@ -79,11 +74,14 @@ export default function NetworkTopology({
         if (id.startsWith('camera'))
             return '/image/camara_ip.png';
 
-        if (id.startsWith('phone'))
-            return '/image/telefono_voip.png';
+        if (id.startsWith("cam"))
+            return "/image/camara_ip.png";
 
-        if (id.startsWith('printer'))
-            return '/image/impresora.png';
+        if (id.startsWith("printer"))
+            return "/image/impresora.png";
+
+        if (id.startsWith("phone"))
+            return "/image/telefono_voip.png";
 
         if (id.startsWith('nas'))
             return '/image/NAS.png';
@@ -97,15 +95,10 @@ export default function NetworkTopology({
         if (id.startsWith('antenaPTMP'))
             return '/image/antPTMP.png';
 
-        if(id==="internet")
-            return "/image/internet.png";
-
-        if(id==="router")
+        if( id.startsWith('routers'))
             return "/image/router.png";
 
-        if(id==="firewall")
-            return "/image/Firewall.png";
-
+        
         return '/image/PCS.png';
     }
 
@@ -116,11 +109,11 @@ export default function NetworkTopology({
         color: string,
         startX: number,
         startY: number,
-        columns = 4,
+        columns = 5,
     ) {
 
-        const gapX = 40;
-        const gapY = 40;
+        const gapX = 35; // Espacio horizontal entre nodos
+        const gapY = 35; // Espacio vertical entre nodos
 
         for (let i = 0; i < count; i++) {
 
@@ -137,7 +130,7 @@ export default function NetworkTopology({
             });
 
             edges.push({
-                from: 'core',
+                from: "rack",
                 to: id,
             });
         }
@@ -151,92 +144,90 @@ export default function NetworkTopology({
         enlaces: {x: 340, y: 420}
     };
 
-    addGroup(pcs, 'pc', 'PC', '#00FF7F', zones.usuarios.x - 50, zones.usuarios.y, 4);
-    addGroup(servers, 'srv', 'Server', '#FF8C00', zones.servicios.x - 20, zones.servicios.y + 40, 4);
-    addGroup(cameras, 'camera', 'Cám', '#7FFFD4', zones.seguridad.x - 6, zones.seguridad.y, 4);
-    addGroup(phones, 'phone', 'VoIP', '#1E90FF', zones.wireless.x + 680, zones.wireless.y - 200, 4);
-    addGroup(printers, 'printer', 'Impre', '#B0C4DE', zones.enlaces.x - 350, zones.enlaces.y + 100, 4);
-    addGroup(nas, 'nas', 'NAS', '#FF0000', zones.servicios.x - 20, zones.servicios.y + 340, 4);
-    addGroup(cameraptz, 'cameraptz', 'CámPTZ', '#40E0D0', zones.seguridad.x + 200, zones.seguridad.y, 4);
-    addGroup(accessPoints, 'accesspoint', 'PAccess', '#FFFF00', zones.wireless.x + 280, zones.wireless.y + 100, 4);
-    addGroup(antenasptp, 'antenaPTP', 'AntPTP', '#FF00FF', zones.enlaces.x + 265, zones.enlaces.y + 100, 4);
-    addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#FFD700', zones.enlaces.x + 460, zones.enlaces.y + 100, 4);
+    addGroup(pcs, 'pc', 'PC', '#0000FF', zones.usuarios.x - 25, zones.usuarios.y, 5);
+    addGroup(servers, 'srv', 'Server', '#00FFFF', zones.servicios.x + 20, zones.servicios.y + 40, 5);
+    addGroup(cameras, 'camera', 'Cám', '#0000FF', zones.seguridad.x + 20, zones.seguridad.y, 5);
+    addGroup(cameraptz, 'cameraptz', 'CámPTZ', '#0000FF', zones.seguridad.x + 250, zones.seguridad.y, 5);
+    addGroup(phones, 'phone', 'VoIP', '#00FFFF', zones.wireless.x + 740, zones.wireless.y - 200, 5);
+    addGroup(printers, 'printer', 'Impre', '#0000FF', zones.enlaces.x + 730, zones.enlaces.y - 200, 5);
+    addGroup(nas, 'nas', 'NAS', '#00FFFF', zones.servicios.x - 80, zones.servicios.y + 550, 5);
+    addGroup(accessPoints, 'accesspoint', 'AccessP', '#00FFFF', zones.wireless.x + 200, zones.wireless.y + 310, 5);
+    addGroup(antenasptp, 'antenaPTP', 'AntPTP', '#0000FF', zones.enlaces.x + 205, zones.enlaces.y + 310, 5);
+    addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#00FFFF', zones.enlaces.x + 420, zones.enlaces.y + 310, 5);
+    addGroup(routersTopo, 'routers', 'Router', '#00FFFF', zones.enlaces.x + 640, zones.enlaces.y + 310, 5);
 
     function getLabelY(node: Node) {
-        return node.id === 'core'
-            ? node.y + 20
-            : node.y + 25;
+        return node.id === "rack"
+            ? node.y + 70 // Ajuste vertical para el rack
+            : node.y + 20; // Ajuste vertical para los nodos
     }
 
     return (
         <svg
             viewBox={`0 0 ${W} ${H}`}
             style={{
-                width: '100%',
-                height: '90%',
-                overflow: 'visible',
+                width: "100%",
+                height: "100%",
+                overflow: "visible",
             }}
         >
 
-            {/* conexiones */}
+
             {edges.map((edge, i) => {
 
-                const from =
-                    nodes.find(
-                        n => n.id === edge.from
-                    )!;
-
-                const to =
-                    nodes.find(
-                        n => n.id === edge.to
-                    )!;
+                const from = nodes.find(n => n.id === edge.from)!;
+                const to = nodes.find(n => n.id === edge.to)!;
 
                 return (
                     <line
                         key={i}
+                        className="flow-line"
                         x1={from.x}
                         y1={from.y}
                         x2={to.x}
                         y2={to.y}
                         stroke={to.color}
-                        strokeWidth={1}
-                        strokeOpacity={0.3}
-                        strokeDasharray="5 4"
+                        strokeWidth={2}
+                        strokeOpacity={0.7}
+                        strokeDasharray="8 6"
                     />
                 );
+
             })}
 
-            {/* nodos */}
+
             {nodes.map(node => {
 
                 const size =
-                    node.id === 'core'
-                        ? 100
-                        : 30;
+                    node.id === 'rack'
+                        ? 130 // Tamaño del rack
+                        : 30; // Tamaño de los nodos
+
 
                 return (
+
                     <g key={node.id}>
 
-                        {/* imagen */}
+
                         <image
                             href={getImg(node.id)}
                             x={node.x - size / 2}
                             y={node.y - size / 2}
                             width={size}
                             height={size}
-                            preserveAspectRatio="xMidYMid meet"
+
                         />
 
-                        {/* texto */}
+
                         <text
                             x={node.x}
                             y={getLabelY(node)}
                             textAnchor="middle"
                             fill={node.color}
                             fontSize={
-                                node.id === 'core'
-                                    ? 15
-                                    : 7
+                                node.id === 'rack'
+                                    ? 15 // Tamaño de fuente para el rack
+                                    : 7 // Tamaño de fuente para los nodos
                             }
                             fontFamily="Consolas, monospace"
                         >
@@ -244,10 +235,13 @@ export default function NetworkTopology({
                         </text>
 
                     </g>
+
                 );
+
             })}
 
         </svg>
 
     );
+
 }
