@@ -156,7 +156,7 @@ export default function NetworkTopology({
     addGroup(antenasptmp, 'antenaPTMP', 'AntPTMP', '#00FFFF', zones.enlaces.x + 420, zones.enlaces.y + 310, 5);
     addGroup(routersTopo, 'routers', 'Router', '#00FFFF', zones.enlaces.x + 640, zones.enlaces.y + 310, 5);
 
-    function getLabelY(node: Node) {
+    function getLabelY(node: Node) {    
         return node.id === "rack"
             ? node.y + 70 // Ajuste vertical para el rack
             : node.y + 20; // Ajuste vertical para los nodos
@@ -181,7 +181,6 @@ export default function NetworkTopology({
                 return (
                     <line
                         key={i}
-                        className="flow-line"
                         x1={from.x}
                         y1={from.y}
                         x2={to.x}
