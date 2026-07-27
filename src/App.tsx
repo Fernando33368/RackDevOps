@@ -9,6 +9,8 @@ export default function App() {
 
     const { token } = useAuth();
 
+    console.log("TOKEN EN APP:", token);
+
     return (
 
         <Routes>

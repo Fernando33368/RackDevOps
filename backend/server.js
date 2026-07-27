@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const bcrypt = require("bcrypt");
 const express = require("express");
 const cors = require("cors");
@@ -7,8 +9,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 const jwt = require("jsonwebtoken");
-
 const JWT_SECRET = "RackDynamics_ClaveTemporal";
+const catalogoEquipos = require("./catalog/equipos");
+const { buscarProducto } = require("./services/serpApiService");
+const { obtenerEquipo } = require("./services/equipoService");
 
 /* ==========================================
    Registrar usuario
@@ -385,6 +389,155 @@ app.delete("/projects/:id", auth, async (req, res) => {
     res.json({
         message: "Proyecto eliminado"
     });
+
+});
+
+/* ==========================================
+   PROBAR SERPAPI
+========================================== */
+
+app.get("/api/test-serp/:codigo", async (req, res) => {
+
+    try {
+
+        const { codigo } = req.params;
+
+        const equipo = catalogoEquipos[codigo];
+
+        if (!equipo) {
+            return res.status(404).json({
+                error: "Equipo no encontrado en el catálogo."
+            });
+        }
+
+        const resultado = await buscarProducto(equipo.nombre);
+
+        res.json(resultado);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            error: error.message
+        });
+
+    }
+
+});
+
+/* ==========================================
+   PROBAR EQUIPOS
+========================================== */
+
+app.get("/api/equipo/:codigo", async (req, res) => {
+
+    try {
+
+        const { codigo } = req.params;
+
+        const equipo = await obtenerEquipo(codigo);
+
+        res.json(equipo);
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+
+    }
+
+});
+
+/* ==========================================
+   COTIZACIÓN
+========================================== */
+
+app.post("/api/cotizacion", async (req, res) => {
+
+    try {
+
+        const { equipos } = req.body;
+
+        if (!equipos || !Array.isArray(equipos)) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Debe enviar un arreglo de equipos."
+
+            });
+
+        }
+
+        const resultado = [];
+
+        let total = 0;
+
+        for (const item of equipos) {
+
+            const equipo = await obtenerEquipo(item.codigo);
+
+            const precio = Number(equipo.precio) || 0;
+
+            const subtotal = precio * item.cantidad;
+
+            total += subtotal;
+
+            resultado.push({
+
+                codigo: equipo.codigo,
+
+                nombre: equipo.nombre,
+
+                marca: equipo.marca,
+
+                categoria: equipo.categoria,
+
+                precio,
+
+                cantidad: item.cantidad,
+
+                subtotal,
+
+                moneda: equipo.moneda,
+
+                tienda: equipo.tienda,
+
+                url: equipo.url,
+
+                imagen: equipo.imagen
+
+            });
+
+        }
+
+        res.json({
+
+            equipos: resultado,
+
+            total
+
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
 
 });
 
